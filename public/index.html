@@ -293,8 +293,6 @@ input:focus{ outline:none; border-color:var(--sky-d);}
       <button class="cbtn fs-btn" style="background:#7fa9c9;font-size:15px;padding:11px 8px;">⛶ 全螢幕</button>
     </div>
   </div>
-
-  <div id="dash"></div>
 </div>
 
 <canvas id="confetti" class="hidden"></canvas>
@@ -575,7 +573,8 @@ function refreshAll(){ renderTop(); renderDash(); renderButtons(); }
 function renderTop(){ const p=cur(); $('roundChip').textContent=`第 ${G.save.current_round} / ${G.save.max_rounds} 回合`; const b=$('turnBanner'); b.innerHTML=`現在輪到 <b>${escapeHtml(p.name)}</b>`; b.style.background=p.color; }
 function bar(ico,key,val){ let c=''; for(let i=0;i<10;i++) c+=`<span class="seg${i<val?' on '+key:''}"></span>`; return `<div class="bar"><span class="b-ico">${ico}</span><span class="b-cells">${c}</span><span class="b-val">${val}</span></div>`; }
 function renderDash(){
-  const dash=$('dash'); dash.innerHTML='';
+  const dash=$('dash'); if(!dash) return;   // 小組狀態卡已改紙本，畫面不顯示
+  dash.innerHTML='';
   G.players.forEach(p=>{
     const card=el('div','pcard'+(p.id===G.save.current_turn?' active':'')+(p.paused_turns>0?' paused':'')); card.dataset.pid=p.id;
     const badges=[]; if(p.is_vip) badges.push('<span class="badge vip">🏦VIP</span>'); if(p.insurance>0) badges.push(`<span class="badge ins">🛡️${p.insurance}</span>`); if(p.paused_turns>0) badges.push(`<span class="badge pause">⏸${p.paused_turns}</span>`);
