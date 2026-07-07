@@ -7,7 +7,7 @@
 <style>
 :root{
   --paper:#fff8f0; --paper2:#fdeede;
-  --ink:#5b4636; --ink-soft:#8a7563;
+  --leaf:#8bc34a; --leaf-d:#689f38;
   --pink:#ff9eb5; --pink-d:#f06292;
   --peach:#ffb38a; --peach-d:#ff8a5c;
   --mint:#8fd6a6; --mint-d:#4caf7d;
@@ -15,7 +15,8 @@
   --lilac:#c7a9f0; --lilac-d:#9575cd;
   --sun:#ffd97a; --sun-d:#f5b921;
   --danger:#ff6b57; --danger-d:#e2503b;
-  /* 屬性色 */
+  --brown:#8d6e63; --brown-d:#6d4c41;
+  --ink:#5b4636; --ink-soft:#8a7563;
   --c-money:#f5b921; --c-happy:#ff8fb0; --c-growth:#6fcf97; --c-health:#ff8a5c;
   --shadow:0 6px 16px rgba(120,90,60,.18);
   --shadow-s:0 3px 8px rgba(120,90,60,.16);
@@ -35,42 +36,31 @@ button{font-family:inherit;cursor:pointer;border:none;}
 .hidden{display:none !important;}
 ::-webkit-scrollbar{height:10px;width:10px;}
 ::-webkit-scrollbar-thumb{background:#e6cdb5;border-radius:10px;}
-
-/* ============ 通用手繪卡片 ============ */
 .hand{ border:3px solid #fff; box-shadow:var(--shadow); border-radius:var(--radius); background:var(--paper);}
 
-/* ==================================================
-   設定畫面
-=================================================== */
+/* ===== 設定畫面 ===== */
 #setup{ height:100%; overflow-y:auto; padding:26px 18px 60px;}
-.setup-wrap{ max-width:960px; margin:0 auto;}
+.setup-wrap{ max-width:980px; margin:0 auto;}
 .title-card{ text-align:center; padding:22px; margin-bottom:20px;}
 .title-card h1{ margin:0; font-size:40px; color:var(--peach-d); letter-spacing:1px; transform:rotate(-1deg);}
 .title-card p{ margin:8px 0 0; color:var(--ink-soft); font-size:16px;}
 .sec{ padding:20px 24px; margin-bottom:18px;}
-.sec > h2{ margin:0 0 14px; font-size:22px; color:var(--peach-d); display:flex; align-items:center; gap:8px;}
+.sec > h2{ margin:0 0 14px; font-size:22px; color:var(--peach-d); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
 .pill{ border:2px solid var(--peach); background:#fff; color:var(--ink); padding:8px 18px; border-radius:999px; font-size:16px; font-weight:700;}
 .pill.active{ background:var(--peach); color:#fff;}
 input[type=number],input[type=text]{ font-family:inherit; font-size:15px; padding:8px 12px; border:2px solid var(--paper2); border-radius:12px; background:#fff; color:var(--ink);}
 input:focus{ outline:none; border-color:var(--sky-d);}
 
-/* 角色庫 */
-.char-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px;}
-.char-card{ border:3px solid var(--paper2); border-radius:18px; background:#fff; padding:14px; text-align:center; transition:transform .12s; position:relative; cursor:pointer;}
-.char-card.on{ border-color:var(--mint-d); box-shadow:0 0 0 3px rgba(111,207,151,.3);}
-.char-card:hover{ transform:translateY(-3px);}
-.char-card .cc-emoji{ font-size:52px; line-height:1;}
-.char-card .cc-name{ margin-top:6px;}
-.char-card .cc-name input{ width:100%; text-align:center; font-weight:800; font-size:16px; border-color:transparent; background:transparent;}
-.char-card .cc-name input:focus{ background:#fff; border-color:var(--sky-d);}
-.char-card .cc-frag{ margin-top:8px; font-size:12px; color:var(--ink-soft); line-height:1.5;}
-.char-card .cc-badge{ position:absolute; top:8px; right:8px; font-size:13px; font-weight:800; padding:2px 10px; border-radius:999px;}
-.char-card.on .cc-badge{ background:var(--mint-d); color:#fff;}
-.char-card:not(.on) .cc-badge{ background:#e6ddd3; color:var(--ink-soft);}
-.char-card .cc-init{ margin-top:6px; font-size:12px; color:var(--sun-d); font-weight:700;}
+#teamList{ display:flex; flex-direction:column; gap:10px;}
+.team-row{ display:flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--paper2); border-radius:14px; padding:8px 12px;}
+.team-row .name-in{ flex:1; min-width:140px;}
+.add-btn{ margin-top:10px; border:2px dashed var(--mint-d); background:#f2fbef; color:var(--mint-d); padding:10px; border-radius:14px; font-size:16px; font-weight:800; width:100%;}
 
-/* 地圖比例 */
+.disc{ width:32px;height:32px;border-radius:50%;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);flex:none;}
+.disc-inline{ display:inline-flex;width:24px;height:24px;border-radius:50%;color:#fff;font-weight:900;align-items:center;justify-content:center;font-size:13px;vertical-align:middle;border:2px solid #fff;}
+.icon-btn{ background:var(--danger); color:#fff; width:32px; height:32px; border-radius:50%; font-size:16px; flex:none;}
+
 .weights{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:12px;}
 .w-item{ background:#fff; border:2px solid var(--paper2); border-radius:14px; padding:10px 12px;}
 .w-item .w-top{ display:flex; justify-content:space-between; font-weight:800;}
@@ -79,12 +69,14 @@ input:focus{ outline:none; border-color:var(--sky-d);}
 /* 格子內容編輯器 */
 .tile-group{ border:2px solid var(--paper2); border-radius:14px; padding:12px 14px; margin-bottom:12px; background:#fff;}
 .tg-head{ font-weight:900; font-size:17px; margin-bottom:8px; color:var(--peach-d);}
-.tg-textrow{ display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+.tg-sub{ font-weight:800; color:var(--ink-soft); margin:10px 0 4px; font-size:14px;}
+.tg-textrow{ display:flex; align-items:center; gap:8px; margin-bottom:8px;}
 .tg-textrow > span{ font-size:14px; color:var(--ink-soft); white-space:nowrap;}
 .tg-text{ flex:1; min-width:120px;}
 .tg-list{ display:flex; flex-direction:column; gap:8px;}
 .opt-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--paper); border-radius:10px; padding:6px 8px;}
 .opt-label{ flex:1; min-width:150px;}
+.opt-label-static{ flex:1; min-width:120px; font-weight:700;}
 .opt-num{ display:inline-flex; align-items:center; gap:2px; font-size:13px;}
 .opt-num input{ width:58px; padding:5px 6px;}
 .opt-frag{ display:inline-flex; align-items:center; gap:3px; font-size:13px; white-space:nowrap;}
@@ -94,62 +86,62 @@ input:focus{ outline:none; border-color:var(--sky-d);}
 .fs-btn{ border:2px solid var(--paper2); background:#fff; color:var(--ink); border-radius:12px; padding:9px 16px; font-weight:800; font-size:15px; box-shadow:var(--shadow-s);}
 .mini-btn{ border:2px solid var(--danger); background:#fff; color:var(--danger-d); border-radius:12px; padding:9px 16px; font-weight:800; font-size:15px;}
 .save-note{ font-size:13px; color:var(--mint-d); font-weight:700;}
-.big-start{ width:100%; padding:18px; font-size:26px; font-weight:900; color:#fff; border-radius:20px;
-  background:linear-gradient(180deg,var(--mint),var(--mint-d)); box-shadow:var(--shadow); margin-top:6px;}
+.big-start{ width:100%; padding:18px; font-size:26px; font-weight:900; color:#fff; border-radius:20px; background:linear-gradient(180deg,var(--mint),var(--mint-d)); box-shadow:var(--shadow); margin-top:6px;}
 .big-start:hover{ filter:brightness(1.05);}
 
-/* ==================================================
-   遊戲畫面
-=================================================== */
+/* ===== 遊戲畫面 ===== */
 #game{ height:100%; display:flex; flex-direction:column;}
-#gtop{ display:flex; align-items:center; gap:14px; padding:10px 18px;}
-#gtop .g-title{ font-size:22px; font-weight:900; color:var(--peach-d);}
-.round-chip{ background:#fff; border:3px solid var(--sky-d); color:var(--sky-d); font-weight:800; font-size:18px; padding:6px 16px; border-radius:14px; box-shadow:var(--shadow-s);}
+#gtop{ display:flex; align-items:center; gap:14px; padding:8px 16px;}
+#gtop .g-title{ font-size:20px; font-weight:900; color:var(--peach-d); white-space:nowrap;}
+.round-chip{ background:#fff; border:3px solid var(--sky-d); color:var(--sky-d); font-weight:800; font-size:18px; padding:6px 16px; border-radius:14px; box-shadow:var(--shadow-s); white-space:nowrap;}
 .turn-banner{ flex:1; text-align:center; font-size:24px; font-weight:900; color:#fff; padding:8px 14px; border-radius:16px; box-shadow:var(--shadow-s); transition:background .3s;}
 
-#gmid{ flex:1; display:flex; min-height:0; padding:0 14px 8px; gap:14px;}
+#gmid{ flex:1; display:flex; min-height:0; padding:0 12px 6px; gap:12px;}
 #mapArea{ flex:1; display:flex; align-items:center; justify-content:center; position:relative; min-width:0;}
 #board{ display:grid; gap:5px;}
-.tile{ border-radius:12px; position:relative; padding:3px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-  border:2px solid rgba(255,255,255,.75); box-shadow:0 2px 5px rgba(120,90,60,.15);}
-.tile .t-no{ position:absolute; top:1px; left:4px; font-size:calc(var(--tile,64px)*0.14); opacity:.45;}
-.tile .t-emoji{ font-size:calc(var(--tile,64px)*0.46); line-height:1.02;}
-.tile .t-label{ font-size:calc(var(--tile,64px)*0.20); font-weight:800; margin-top:1px; text-align:center; line-height:1.05;}
+.tile{ border-radius:12px; position:relative; padding:3px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; border:2px solid rgba(255,255,255,.75); box-shadow:0 2px 5px rgba(120,90,60,.15);}
+.tile .t-no{ position:absolute; top:1px; left:4px; font-size:calc(var(--tile,64px)*0.13); opacity:.45;}
+.tile .t-emoji{ font-size:calc(var(--tile,64px)*0.42); line-height:1.02;}
+.tile .t-label{ font-size:calc(var(--tile,64px)*0.19); font-weight:800; margin-top:1px; text-align:center; line-height:1.05;}
 .tile .t-tokens{ position:absolute; inset:0; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:2px; pointer-events:none;}
-.tk{ width:calc(var(--tile,64px)*0.40); height:calc(var(--tile,64px)*0.40); border-radius:50%; border:3px solid #fff; display:flex; align-items:center; justify-content:center; font-size:calc(var(--tile,64px)*0.26); box-shadow:0 2px 5px rgba(0,0,0,.35); transition:transform .15s;}
-.tk.moving{ transform:scale(1.5); z-index:6; box-shadow:0 0 0 4px var(--sun),0 4px 10px rgba(0,0,0,.4);}
+.tk{ width:calc(var(--tile,64px)*0.42); height:calc(var(--tile,64px)*0.42); border-radius:50%; border:3px solid #fff; display:flex; align-items:center; justify-content:center; font-size:calc(var(--tile,64px)*0.26); font-weight:900; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,.4); transition:transform .15s;}
+.tk.moving{ transform:scale(1.55); z-index:6; box-shadow:0 0 0 4px var(--sun),0 4px 10px rgba(0,0,0,.5);}
 .t-start{background:#fff3c4;} .t-shop{background:#ffd3b6;} .t-challenge{background:#ffb3ba;}
 .t-bank{background:#bae1ff;} .t-charity{background:#ffc4e1;} .t-park{background:#c4f5cf;} .t-chance{background:#e0c3fc;}
-.board-center{ background:linear-gradient(135deg,#fffdf6,#fdf1e4); border:3px dashed #f0d3b8; border-radius:24px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 22px rgba(245,185,33,.12);}
-.board-center .bc-dice{ font-size:66px;} .bc-dice.rolling{ animation:shake .25s infinite;}
+.board-center{ background:linear-gradient(135deg,#fffdf6,#fdf1e4); border:3px dashed #f0d3b8; border-radius:22px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 22px rgba(245,185,33,.12);}
+.board-center .bc-dice{ font-size:calc(var(--tile,64px)*0.9);} .bc-dice.rolling{ animation:shake .25s infinite;}
 @keyframes shake{25%{transform:rotate(-16deg) scale(1.1);}75%{transform:rotate(16deg) scale(1.1);}}
-.board-center .bc-title{ font-size:20px; font-weight:900; color:var(--peach-d);}
-.board-center .bc-sub{ font-size:13px; color:var(--ink-soft); margin-top:2px; text-align:center; padding:0 8px;}
+.board-center .bc-title{ font-size:22px; font-weight:900; color:var(--peach-d);}
+.board-center .bc-sub{ font-size:15px; color:var(--ink-soft); margin-top:2px; text-align:center; padding:0 10px;}
 
-/* 教師控制面板 */
-#control{ width:210px; flex:none; display:flex; flex-direction:column; gap:10px; padding:14px;}
-#control h3{ margin:0 0 2px; font-size:13px; color:var(--ink-soft);}
-.cbtn{ width:100%; padding:14px 8px; font-size:18px; font-weight:900; color:#fff; border-radius:14px; box-shadow:var(--shadow-s); line-height:1.15;}
+/* 控制面板 */
+#control{ width:216px; flex:none; display:flex; flex-direction:column; gap:10px; padding:12px; overflow-y:auto;}
+#control h3{ margin:0 0 4px; font-size:13px; color:var(--ink-soft);}
+.cbtn{ width:100%; padding:13px 8px; font-size:17px; font-weight:900; color:#fff; border-radius:14px; box-shadow:var(--shadow-s); line-height:1.15;}
 .cbtn:active{ transform:translateY(1px);}
 .cbtn:disabled{ opacity:.4; box-shadow:none;}
-.cbtn.roll{ background:var(--sky-d); font-size:22px; padding:18px 8px;}
 .cbtn.end{ background:var(--peach-d);}
 .cbtn.finish{ background:var(--danger-d);}
 .cbtn.undo{ background:#b0a190; font-size:15px; padding:11px 8px;}
 .ctrl-dice{ text-align:center; background:#fff; border-radius:14px; padding:8px; box-shadow:var(--shadow-s);}
-.ctrl-dice .cd-face{ font-size:44px;}
+.ctrl-dice .cd-face{ font-size:46px;}
 .ctrl-dice .cd-txt{ font-size:13px; color:var(--ink-soft);}
+.dice-pad{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
+.dice-btn{ padding:14px 0; font-size:24px; font-weight:900; color:#fff; background:var(--sky-d); border-radius:12px; box-shadow:var(--shadow-s);}
+.dice-btn:active{ transform:translateY(1px);}
+.dice-btn:disabled{ opacity:.4; box-shadow:none;}
+.dice-manual{ display:flex; gap:6px; margin-top:6px;}
+.dice-manual input{ flex:1; width:100%; text-align:center; font-size:18px;}
+.dice-manual button{ background:var(--brown-d); color:#fff; border-radius:12px; padding:0 14px; font-weight:800;}
 
 /* 儀表板 */
-#dash{ display:flex; gap:10px; padding:8px 14px 12px; overflow-x:auto;}
-.pcard{ flex:1; min-width:190px; background:#fff; border:3px solid var(--paper2); border-radius:18px; padding:10px 12px; position:relative; transition:transform .12s;}
+#dash{ display:flex; gap:10px; padding:6px 12px 10px; overflow-x:auto;}
+.pcard{ flex:1; min-width:196px; background:#fff; border:3px solid var(--paper2); border-radius:18px; padding:10px 12px; position:relative;}
 .pcard.active{ border-color:var(--sun-d); box-shadow:0 0 0 3px rgba(245,185,33,.35), var(--shadow-s); transform:translateY(-4px);}
 .pcard.paused{ opacity:.6;}
 .pcard.bump{ animation:bump .4s;}
 @keyframes bump{ 30%{transform:scale(1.05);} }
 .pc-head{ display:flex; align-items:center; gap:8px;}
-.pc-avatar{ font-size:34px; line-height:1;}
 .pc-name{ font-weight:900; font-size:16px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .pc-money{ background:#fff6d9; color:var(--sun-d); font-weight:900; font-size:15px; padding:2px 8px; border-radius:10px; white-space:nowrap;}
 .pc-money.neg{ background:#ffe0da; color:var(--danger-d);}
@@ -157,63 +149,67 @@ input:focus{ outline:none; border-color:var(--sky-d);}
 .bar{ display:flex; align-items:center; gap:6px; font-size:12px;}
 .bar .b-ico{ width:18px; text-align:center;}
 .bar .b-cells{ flex:1; display:flex; gap:2px;}
-.seg{ flex:1; height:15px; border-radius:4px; background:#efe6db; box-shadow:inset 0 0 0 1px rgba(120,90,60,.06); transition:background .2s, transform .2s;}
-.seg.on{ transform:scaleY(1.02);}
-.seg.on.happy{background:var(--c-happy);}
-.seg.on.growth{background:var(--c-growth);}
-.seg.on.health{background:var(--c-health);}
+.seg{ flex:1; height:15px; border-radius:4px; background:#efe6db; box-shadow:inset 0 0 0 1px rgba(120,90,60,.06); transition:background .2s;}
+.seg.on.happy{background:var(--c-happy);} .seg.on.growth{background:var(--c-growth);} .seg.on.health{background:var(--c-health);}
 .bar .b-val{ width:30px; text-align:right; font-weight:800;}
-.pc-frags{ margin-top:8px; display:flex; gap:6px; align-items:center;}
-.frag{ width:26px; height:26px; border-radius:50%; border:2px dashed #d9c8b6; display:flex; align-items:center; justify-content:center; font-size:14px; color:#cbb9a6;}
+.pc-frags{ margin-top:8px; display:flex; gap:6px; align-items:center; font-size:12px;}
+.frag{ width:24px; height:24px; border-radius:50%; border:2px dashed #d9c8b6; display:flex; align-items:center; justify-content:center; font-size:13px; color:#cbb9a6;}
 .frag.got{ border:2px solid var(--mint-d); background:#e8f8ee; color:var(--mint-d);}
 .pc-badges{ position:absolute; top:8px; right:10px; display:flex; gap:4px;}
 .badge{ font-size:11px; font-weight:800; padding:2px 7px; border-radius:999px;}
 .badge.vip{ background:#fff3c4; color:var(--sun-d);}
+.badge.ins{ background:#e3f2fd; color:#1976d2;}
 .badge.pause{ background:#ffe0da; color:var(--danger-d);}
 
-/* ==================================================
-   互動彈窗
-=================================================== */
-#modalLayer{ position:absolute; inset:0; z-index:60; background:rgba(91,70,54,.42); display:flex; align-items:center; justify-content:center; padding:20px;}
-.modal{ background:var(--paper); border:4px solid #fff; border-radius:26px; box-shadow:var(--shadow); max-width:560px; width:100%; padding:24px 28px; text-align:center; animation:pop .3s cubic-bezier(.2,1.4,.5,1);}
+/* 彈窗 */
+#modalLayer{ position:absolute; inset:0; z-index:60; background:rgba(91,70,54,.42); display:flex; align-items:center; justify-content:center; padding:18px;}
+.modal{ background:var(--paper); border:4px solid #fff; border-radius:26px; box-shadow:var(--shadow); max-width:600px; width:100%; padding:22px 26px; text-align:center; animation:pop .3s cubic-bezier(.2,1.4,.5,1); max-height:92vh; overflow-y:auto;}
 @keyframes pop{ from{transform:scale(.7); opacity:0;} }
-.modal .m-emoji{ font-size:64px;}
-.modal .m-title{ font-size:28px; font-weight:900; margin:4px 0;}
+.modal .m-emoji{ font-size:60px;}
+.modal .m-title{ font-size:27px; font-weight:900; margin:4px 0;}
 .modal .m-who{ font-size:15px; color:var(--ink-soft);}
-.modal .m-text{ font-size:18px; color:var(--ink); line-height:1.45; margin:10px 4px;}
-.m-opts{ display:flex; flex-direction:column; gap:10px; margin-top:16px;}
+.modal .m-text{ font-size:19px; color:var(--ink); line-height:1.45; margin:10px 4px;}
+.m-opts{ display:flex; flex-direction:column; gap:10px; margin-top:14px;}
 .opt{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 18px; border-radius:16px; font-size:17px; font-weight:800; color:#fff; box-shadow:var(--shadow-s); text-align:left;}
 .opt:disabled{ opacity:.45; box-shadow:none;}
 .opt .o-eff{ font-size:14px; font-weight:800; background:rgba(255,255,255,.28); padding:3px 10px; border-radius:999px; white-space:nowrap;}
 .opt.buy{background:var(--peach-d);} .opt.good{background:var(--mint-d);} .opt.info{background:var(--sky-d);}
-.opt.warn{background:var(--danger-d);} .opt.plain{background:#b0a190;} .opt.special{background:var(--lilac-d);}
+.opt.warn{background:var(--danger-d);} .opt.plain{background:#b0a190;} .opt.special{background:var(--lilac-d);} .opt.evil{background:#7e57c2;}
+/* 挑戰倒數 */
+.ch-timer{ margin:14px auto 4px; display:flex; flex-direction:column; align-items:center; gap:10px;}
+.ch-timer .ring{ width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;color:#fff;background:conic-gradient(var(--sky-d) var(--deg,360deg), #e6ddd3 0);}
+.ch-timer .ring span{ background:var(--paper); width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--sky-d);}
+.ch-btns{ display:flex; gap:10px;}
+.ch-btns button{ padding:10px 22px; border-radius:12px; font-weight:800; font-size:16px; color:#fff;}
+#chToggle{ background:var(--mint-d);}
+#chReset{ background:#b0a190;}
+.draw-spin{ font-size:90px; display:inline-block; animation:spin .6s linear infinite;}
+@keyframes spin{ to{ transform:rotate(360deg);} }
 
-/* ==================================================
-   結算
-=================================================== */
+/* 結算 */
 #results{ position:absolute; inset:0; z-index:70; background:linear-gradient(160deg,#fff2d6,#ffe1ec); display:flex; align-items:center; justify-content:center; padding:20px; overflow:auto;}
-.res-card{ background:var(--paper); border:4px solid #fff; border-radius:28px; box-shadow:var(--shadow); padding:26px 30px; max-width:720px; width:100%;}
+.res-card{ background:var(--paper); border:4px solid #fff; border-radius:28px; box-shadow:var(--shadow); padding:26px 30px; max-width:760px; width:100%;}
 .res-card h2{ text-align:center; font-size:34px; margin:0 0 6px; color:var(--peach-d);}
 .res-card .champ{ text-align:center; margin:8px 0 18px;}
-.res-card .champ .c-emoji{ font-size:80px;} .res-card .champ .c-name{ font-size:34px; font-weight:900;}
+.res-card .champ .c-disc{ width:90px;height:90px;border-radius:50%;color:#fff;font-weight:900;font-size:44px;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;border:3px solid #fff;box-shadow:var(--shadow);}
+.res-card .champ .c-name{ font-size:32px; font-weight:900;}
 .res-row{ display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:14px; font-size:18px;}
 .res-row:nth-child(even){ background:#fff;}
-.res-row .r-rank{ font-size:26px; width:44px; text-align:center;}
-.res-row .r-emoji{ font-size:26px;}
+.res-row .r-rank{ font-size:24px; width:44px; text-align:center;}
 .res-row .r-name{ flex:1; font-weight:800;}
-.res-row .r-break{ font-size:13px; color:var(--ink-soft); min-width:230px; text-align:right;}
+.res-row .r-break{ font-size:13px; color:var(--ink-soft); min-width:220px; text-align:right;}
 .res-row .r-total{ font-size:24px; font-weight:900; color:var(--mint-d); min-width:90px; text-align:right;}
 .res-again{ display:block; margin:20px auto 0; padding:14px 40px; font-size:20px; font-weight:900; color:#fff; border-radius:16px; background:var(--mint-d); box-shadow:var(--shadow);}
 
 #confetti{ position:fixed; inset:0; z-index:120; pointer-events:none;}
-.toast{ position:absolute; bottom:16px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 22px; border-radius:999px; font-weight:800; z-index:80; box-shadow:var(--shadow); opacity:0; transition:opacity .3s; max-width:80%; text-align:center;}
+.toast{ position:absolute; bottom:14px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 22px; border-radius:999px; font-weight:800; z-index:80; box-shadow:var(--shadow); opacity:0; transition:opacity .3s; max-width:80%; text-align:center;}
 .toast.show{ opacity:1;}
 .toast.warn{ background:var(--danger-d);}
 </style>
 </head>
 <body>
 
-<!-- ===================== 設定 ===================== -->
+<!-- ===== 設定 ===== -->
 <div id="setup">
   <div class="setup-wrap">
     <div class="title-card hand">
@@ -230,21 +226,22 @@ input:focus{ outline:none; border-color:var(--sky-d);}
     </div>
 
     <div class="sec hand">
-      <h2>🎭 選擇上場角色 <span style="font-size:14px;color:var(--ink-soft);font-weight:400;">（點卡片上/下場，2～6 名，可改名）</span></h2>
-      <div class="char-grid" id="charGrid"></div>
+      <h2>🚩 隊伍設定 <span style="font-size:14px;color:var(--ink-soft);font-weight:400;">（2～8 組，實體用磁性小白板代表，可改名）</span></h2>
+      <div id="teamList"></div>
+      <button class="add-btn" id="addTeam">＋ 新增一組</button>
     </div>
 
     <div class="sec hand">
       <h2>🗺️ 地圖格子比例</h2>
       <div class="row" style="margin-bottom:12px;">
         <span>地圖總格數：</span><input type="number" id="totalTiles" min="12" max="36" step="4" value="24" style="width:90px;">
-        <span style="font-size:13px;color:var(--ink-soft);">（4 的倍數，環形地圖剛好排滿，設幾格就是幾格）</span>
+        <span style="font-size:13px;color:var(--ink-soft);">（4 的倍數，長方形環狀地圖剛好排滿，且相鄰格子不重複）</span>
       </div>
       <div class="weights" id="weights"></div>
     </div>
 
     <div class="sec hand">
-      <h2>🎪 格子內容設定 <span style="font-size:14px;color:var(--ink-soft);font-weight:400;">（商店 / 挑戰 / 命運 / 愛心 可自由編輯文字與數值）</span></h2>
+      <h2>🎪 格子內容設定 <span style="font-size:14px;color:var(--ink-soft);font-weight:400;">（商店 / 挑戰 / 命運 / 愛心 / 公園 可自由編輯）</span></h2>
       <div id="tileEditor"></div>
     </div>
 
@@ -258,7 +255,7 @@ input:focus{ outline:none; border-color:var(--sky-d);}
   </div>
 </div>
 
-<!-- ===================== 遊戲 ===================== -->
+<!-- ===== 遊戲 ===== -->
 <div id="game" class="hidden">
   <div id="gtop">
     <div class="g-title">🐰 兔子錢大冒險</div>
@@ -276,11 +273,15 @@ input:focus{ outline:none; border-color:var(--sky-d);}
     <div id="control" class="hand">
       <div class="ctrl-dice">
         <div class="cd-face" id="ctrlDice">🎲</div>
-        <div class="cd-txt" id="ctrlDiceTxt">準備擲骰</div>
+        <div class="cd-txt" id="ctrlDiceTxt">請輸入骰子點數</div>
       </div>
       <div>
-        <h3>擲骰移動</h3>
-        <button class="cbtn roll" id="btnRoll">🎲 擲骰子</button>
+        <h3>🎲 實體骰子點數（講者輸入）</h3>
+        <div class="dice-pad" id="dicePad"></div>
+        <div class="dice-manual">
+          <input type="number" id="diceInput" min="1" max="99" placeholder="其他點數">
+          <button id="diceGo">前進</button>
+        </div>
       </div>
       <div>
         <h3>回合控制</h3>
@@ -298,11 +299,10 @@ input:focus{ outline:none; border-color:var(--sky-d);}
 
 <canvas id="confetti" class="hidden"></canvas>
 
-<!-- Firebase SDK（compat 版，透過 CDN 載入） -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>
-  // Web 端 Firebase 設定（apiKey 為公開金鑰，放前端屬正常）
   const FIREBASE_CONFIG = {
     apiKey: "AIzaSyCW5KhENWyQv0K2r9y4du39uzLwwC9z1Uw",
     authDomain: "rabbit-adventure-kai.firebaseapp.com",
@@ -313,39 +313,24 @@ input:focus{ outline:none; border-color:var(--sky-d);}
   };
   let db=null;
   try{ if(window.firebase){ firebase.initializeApp(FIREBASE_CONFIG); db=firebase.firestore(); } }
-  catch(e){ console.warn('Firebase 初始化失敗，將僅使用本機儲存', e); }
+  catch(e){ console.warn('Firebase 初始化失敗，僅用本機儲存', e); }
 </script>
 
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
+const DICE=['⚀','⚁','⚂','⚃','⚄','⚅'];
 
-/* ==================================================
-   音效（Web Audio 合成，免外部檔、離線可用）
-=================================================== */
+/* ===== 音效 ===== */
 const Sound = (()=>{
   let ctx=null, enabled=true;
-  function ensure(){
-    if(!ctx){ try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
-    if(ctx.state==='suspended') ctx.resume();
-    return ctx;
-  }
-  function note(freq,start,dur,type='sine',vol=0.2){
-    const c=ensure(); if(!c||!enabled) return;
-    const o=c.createOscillator(), g=c.createGain();
-    o.type=type; o.frequency.value=freq;
-    const t=c.currentTime+start;
-    g.gain.setValueAtTime(0.0001,t);
-    g.gain.exponentialRampToValueAtTime(vol,t+0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.03);
-  }
-  const seq=(arr,type,vol)=>arr.forEach(([f,s,d])=>note(f,s,d,type,vol));
+  function ensure(){ if(!ctx){ try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } } if(ctx.state==='suspended') ctx.resume(); return ctx; }
+  function note(f,s,d,type='sine',vol=0.2){ const c=ensure(); if(!c||!enabled) return; const o=c.createOscillator(),g=c.createGain(); o.type=type;o.frequency.value=f; const t=c.currentTime+s; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g).connect(c.destination); o.start(t); o.stop(t+d+0.03); }
+  const seq=(a,type,vol)=>a.forEach(([f,s,d])=>note(f,s,d,type,vol));
   return {
     ensure, setEnabled(v){enabled=v;}, isEnabled(){return enabled;},
     click(){ note(300,0,0.06,'square',0.10); },
     step(){ note(520,0,0.045,'triangle',0.06); },
-    dice(){ seq([[420,0,0.05],[620,0.06,0.05],[500,0.12,0.06]],'square',0.09); },
     gain(){ seq([[660,0,0.08],[880,0.08,0.08],[1320,0.16,0.13]],'sine',0.15); },
     buy(){ note(540,0,0.09,'sine',0.13); note(400,0.09,0.12,'sine',0.11); },
     fragment(){ seq([[880,0,0.07],[1175,0.07,0.07],[1568,0.14,0.16]],'triangle',0.15); },
@@ -353,329 +338,181 @@ const Sound = (()=>{
     pass(){ seq([[988,0,0.09],[1319,0.09,0.18]],'square',0.16); },
     medical(){ seq([[880,0,0.15],[700,0.15,0.15],[880,0.3,0.15],[700,0.45,0.22]],'sawtooth',0.13); },
     sad(){ seq([[494,0,0.14],[392,0.14,0.16],[294,0.3,0.24]],'sawtooth',0.13); },
+    evil(){ seq([[330,0,0.12],[262,0.12,0.14],[196,0.26,0.2]],'sawtooth',0.14); },
     win(){ seq([[523,0,0.14],[659,0.14,0.14],[784,0.28,0.14],[1047,0.42,0.3],[784,0.74,0.12],[1047,0.86,0.42]],'sine',0.17); },
     turn(){ note(660,0,0.08,'sine',0.09); },
   };
 })();
 const sfx = Sound;
 
-/* ==================================================
-   後台設定表 (config_tables)
-=================================================== */
-// characters_template：初始金錢 / 三圍 / 專屬 3 碎片
-const CHAR_LIB = [
-  {emoji:'👩‍🏫', name:'老師', money:200, happy:3, growth:3, health:8, fragments:['粉筆','U型枕','小蜜蜂'], color:'#ff9eb5'},
-  {emoji:'👨‍🍳', name:'廚師', money:200, happy:3, growth:3, health:8, fragments:['食譜','鍋鏟','平底鍋'], color:'#ffb38a'},
-  {emoji:'🧑‍⚕️', name:'醫生', money:200, happy:3, growth:3, health:8, fragments:['聽診器','急救包','溫度計'], color:'#8ec7f0'},
-  {emoji:'🧑‍🌾', name:'農夫', money:200, happy:3, growth:3, health:8, fragments:['雨鞋','鋤頭','斗笠'], color:'#8fd6a6'},
-  {emoji:'🧑‍🎤', name:'歌手', money:200, happy:3, growth:3, health:8, fragments:['喉糖','麥克風','樂譜'], color:'#c7a9f0'},
-];
-// map_tiles 類型定義
+/* ===== 後台設定表 ===== */
+const TEAM_COLORS = ['#ff8a65','#4fc3f7','#81c784','#ffd54f','#ba68c8','#f06292','#4db6ac','#a1887f'];
+const FRAG_NAMES = ['碎片①','碎片②','碎片③'];
 const TILE = {
-  start:     {emoji:'🏁', label:'起點'},
-  shop:      {emoji:'🏪', label:'商店'},
-  challenge: {emoji:'⚔️', label:'挑戰'},
-  bank:      {emoji:'🏦', label:'銀行'},
-  charity:   {emoji:'❤️', label:'愛心'},
-  park:      {emoji:'🌳', label:'公園'},
-  chance:    {emoji:'🎲', label:'命運'},
+  start:{emoji:'🏁',label:'起點'}, shop:{emoji:'🏪',label:'商店'}, challenge:{emoji:'⚔️',label:'挑戰'},
+  bank:{emoji:'🏦',label:'銀行'}, charity:{emoji:'❤️',label:'愛心'}, park:{emoji:'🌳',label:'公園'}, chance:{emoji:'🎲',label:'命運'},
 };
 const DEFAULT_WEIGHTS = { shop:5, challenge:3, bank:2, charity:3, park:3, chance:4 };
-// chance_cards 命運卡池
-const CHANCE_CARDS = [
-  {text:'果陀劇場《解憂雜貨店》特價票！', money:-15, happy:2, growth:2},
-  {text:'在路上撿到一個零錢包，物歸原主後失主給你謝禮。', money:20, growth:1},
-  {text:'心愛的玩具壞掉了，送修要花一點錢。', money:-15, happy:-1},
-  {text:'鄰居阿姨請你吃了美味的點心！', happy:1, health:1},
-  {text:'不小心感冒了，買了藥休息一下。', money:-10, health:-1},
-  {text:'參加了免費的理財小講座，學到好多知識！', growth:2},
-  {text:'收到長輩的生日紅包，好開心！', money:50, happy:1},
-  {text:'把家裡的回收物拿去換錢，還幫助了環保。', money:15, growth:1},
-];
 const ROUND_OPTIONS = [5,8,10,12];
-
-// 計分權重
 const SC_HAPPY=100, SC_GROWTH=200, SC_FRAG=500;
-// 送醫
 const MEDICAL_FEE=100, REVIVE_HEALTH=5;
+const VIP_COST=100, VIP_INTEREST=20, INSURANCE_COST=50;
 
-/* ==================================================
-   設定畫面狀態
-=================================================== */
+function DEFAULT_TILES(){ return {
+  shop:{ text:'歡迎光臨夢想商店！（每次隨機出現 3 種商品，和台下同學討論）', items:[
+    {label:'🧩 買任務碎片', money:-30, fragment:true, happy:0, growth:0, health:0},
+    {label:'🍗 買健康（雞胸肉）', money:-20, health:3, growth:1, happy:0},
+    {label:'🍟 買快樂（薯條）', money:-40, happy:3, health:-1, growth:0},
+    {label:'📗 買成長（理財書）', money:-25, growth:2, happy:0, health:0},
+    {label:'🥗 買健康（蔬果餐）', money:-15, health:2, happy:0, growth:0},
+    {label:'🎁 買快樂（小禮物）', money:-30, happy:2, health:0, growth:0},
+  ]},
+  challenge:{ timerSec:60, questions:[
+    '說出三種「不花錢也能得到快樂」的方法。',
+    '如果每天存 10 元，一週可以存多少錢？',
+    '想一想：買一送一真的比較划算嗎？為什麼？',
+    '列出三件「需要」和三件「想要」的東西。',
+    '討論：零用錢要怎麼分配才聰明？',
+  ], items:[
+    {label:'✅ 挑戰成功', growth:2, happy:1, money:0, health:0, pause:0},
+    {label:'❌ 挑戰失敗', happy:1, growth:0, money:0, health:0, pause:0},
+  ]},
+  charity:{ text:'愛心捐款時間！要幫助有需要的人嗎？', items:[
+    {label:'❤️ 捐款', money:-20, happy:2, growth:1, health:0},
+    {label:'🙅 這次不捐', money:0, happy:0, growth:0, health:0},
+  ]},
+  chance:{ drawMs:1600, cards:[
+    {text:'撿到零錢包物歸原主，失主給你謝禮。', money:20, growth:1, happy:0, health:0},
+    {text:'心愛的玩具壞掉，送修花了一點錢。', money:-15, happy:-1, growth:0, health:0},
+    {text:'鄰居阿姨請你吃美味點心！', happy:1, health:1, money:0, growth:0},
+    {text:'不小心感冒，買藥休息一下。', money:-10, health:-1, happy:0, growth:0},
+    {text:'參加免費理財小講座，學到好多！', growth:2, money:0, happy:0, health:0},
+    {text:'收到長輩的生日紅包，好開心！', money:50, happy:1, growth:0, health:0},
+  ], sabotage:[
+    {text:'惡作劇！害對方掉了錢包，錢歸你。', money:20, happy:0, growth:0},
+    {text:'搶走對方的快樂點心！', happy:2, money:0, growth:0},
+    {text:'偷看對方的筆記，吸收了他的成長。', growth:2, money:0, happy:0},
+    {text:'讓對方分心，順走一點快樂與成長。', happy:1, growth:1, money:0},
+  ]},
+  park:{ questions:[
+    '說出一個你今天最感謝的人事物。',
+    '分享一個不用花錢的快樂回憶。',
+    '想一個下週想達成的小目標。',
+    '說出三種公園裡可以做的免費活動。',
+  ], doEffect:{ happy:2, growth:1, health:1 }, skipEffect:{ happy:1, health:1, growth:0 } }
+}; }
+
+/* ===== 設定狀態 ===== */
 let setup = {
   maxRounds:8, customRound:false,
-  chars: CHAR_LIB.map((c,i)=>({...c, fragments:[...c.fragments], on:i<3})),
+  teams:[0,1,2,3,4].map(i=>({ name:'第'+(i+1)+'組', color:TEAM_COLORS[i] })),
   totalTiles:24,
   weights:{...DEFAULT_WEIGHTS},
-  tiles:{
-    shop:{ text:'歡迎光臨夢想商店！要買什麼呢？（和台下同學討論看看）', items:[
-      {label:'🧩 買任務碎片', money:-30, fragment:true, happy:0, growth:0, health:0},
-      {label:'🍗 買健康（舒肥雞胸肉）', money:-20, health:3, growth:1, happy:0},
-      {label:'🍟 買快樂（客製薯條）', money:-40, happy:3, health:-1, growth:0},
-    ]},
-    challenge:{ text:'挑戰來了！要接受理財檢定挑戰嗎？（接受要暫停一回合喔）', items:[
-      {label:'⚔️ 接受挑戰', money:30, growth:2, pause:1, happy:0, health:0},
-      {label:'🏳️ 放棄挑戰', happy:1, money:0, growth:0, health:0, pause:0},
-    ]},
-    charity:{ text:'愛心捐款時間！要幫助有需要的人嗎？', items:[
-      {label:'❤️ 捐款', money:-20, happy:2, growth:1, health:0},
-      {label:'🙅 這次不捐', money:0, happy:0, growth:0, health:0},
-    ]},
-    chance:{ cards: CHANCE_CARDS.map(c=>({text:c.text, money:c.money||0, happy:c.happy||0, growth:c.growth||0, health:c.health||0})) },
-  },
+  tiles: DEFAULT_TILES(),
 };
 
+/* ---- 設定畫面渲染 ---- */
 function renderRoundPills(){
   const box=$('roundPills'); box.innerHTML='';
-  ROUND_OPTIONS.forEach(r=>{
-    const b=document.createElement('button');
-    b.className='pill'+(!setup.customRound&&setup.maxRounds===r?' active':'');
-    b.textContent=r+' 回合';
-    b.onclick=()=>{ setup.customRound=false; setup.maxRounds=r; renderRoundPills(); $('customRoundRow').style.display='none'; };
-    box.appendChild(b);
-  });
-  const c=document.createElement('button');
-  c.className='pill'+(setup.customRound?' active':'');
-  c.textContent='自訂';
-  c.onclick=()=>{ setup.customRound=true; renderRoundPills(); $('customRoundRow').style.display='flex'; setup.maxRounds=parseInt($('customRound').value)||6; };
-  box.appendChild(c);
+  ROUND_OPTIONS.forEach(r=>{ const b=document.createElement('button'); b.className='pill'+(!setup.customRound&&setup.maxRounds===r?' active':''); b.textContent=r+' 回合';
+    b.onclick=()=>{ setup.customRound=false; setup.maxRounds=r; renderRoundPills(); $('customRoundRow').style.display='none'; }; box.appendChild(b); });
+  const c=document.createElement('button'); c.className='pill'+(setup.customRound?' active':''); c.textContent='自訂';
+  c.onclick=()=>{ setup.customRound=true; renderRoundPills(); $('customRoundRow').style.display='flex'; setup.maxRounds=parseInt($('customRound').value)||6; }; box.appendChild(c);
 }
 $('customRound').addEventListener('input',e=>{ setup.maxRounds=parseInt(e.target.value)||6; });
 
-function renderChars(){
-  const grid=$('charGrid'); grid.innerHTML='';
-  setup.chars.forEach((c,i)=>{
-    const card=document.createElement('div');
-    card.className='char-card'+(c.on?' on':'');
-    card.innerHTML=`
-      <div class="cc-badge">${c.on?'上場':'下場'}</div>
-      <div class="cc-emoji">${c.emoji}</div>
-      <div class="cc-name"><input value="${escapeHtml(c.name)}"></div>
-      <div class="cc-init">💰${c.money}　💖${c.happy} 🌱${c.growth} 💪${c.health}</div>
-      <div class="cc-frag">🧩 ${c.fragments.map(escapeHtml).join('・')}</div>`;
-    const nameIn=card.querySelector('input');
-    nameIn.onclick=e=>e.stopPropagation();
-    nameIn.oninput=e=>c.name=e.target.value;
-    card.onclick=()=>{
-      const onCount=setup.chars.filter(x=>x.on).length;
-      if(c.on && onCount<=2){ alert('最少要有 2 名角色上場喔！'); return; }
-      if(!c.on && onCount>=6){ alert('最多 6 名角色上場喔！'); return; }
-      c.on=!c.on; renderChars();
-    };
-    grid.appendChild(card);
+function renderTeams(){
+  const box=$('teamList'); box.innerHTML='';
+  setup.teams.forEach((t,i)=>{
+    t.color=TEAM_COLORS[i];
+    const row=document.createElement('div'); row.className='team-row';
+    row.innerHTML=`<span class="disc" style="background:${t.color}">${i+1}</span>
+      <input class="name-in" value="${escapeHtml(t.name)}">
+      <button class="icon-btn" title="刪除">✕</button>`;
+    row.querySelector('.name-in').oninput=e=>t.name=e.target.value;
+    row.querySelector('.icon-btn').onclick=()=>{ if(setup.teams.length<=2){alert('最少 2 組喔！');return;} setup.teams.splice(i,1); renderTeams(); };
+    box.appendChild(row);
   });
+  $('addTeam').disabled=setup.teams.length>=8;
 }
+$('addTeam').onclick=()=>{ if(setup.teams.length>=8){alert('最多 8 組喔！');return;} const i=setup.teams.length; setup.teams.push({name:'第'+(i+1)+'組',color:TEAM_COLORS[i]}); renderTeams(); };
+
 function renderWeights(){
   const box=$('weights'); box.innerHTML='';
-  Object.keys(DEFAULT_WEIGHTS).forEach(k=>{
-    const item=document.createElement('div'); item.className='w-item';
-    item.innerHTML=`<div class="w-top"><span>${TILE[k].emoji} ${TILE[k].label}</span><span class="wv">${setup.weights[k]}</span></div>
-      <input type="range" min="0" max="8" value="${setup.weights[k]}">`;
-    const rng=item.querySelector('input'), val=item.querySelector('.wv');
-    rng.oninput=e=>{ setup.weights[k]=parseInt(e.target.value); val.textContent=e.target.value; };
-    box.appendChild(item);
-  });
+  Object.keys(DEFAULT_WEIGHTS).forEach(k=>{ const item=document.createElement('div'); item.className='w-item';
+    item.innerHTML=`<div class="w-top"><span>${TILE[k].emoji} ${TILE[k].label}</span><span class="wv">${setup.weights[k]}</span></div><input type="range" min="0" max="8" value="${setup.weights[k]}">`;
+    const rng=item.querySelector('input'), val=item.querySelector('.wv'); rng.oninput=e=>{ setup.weights[k]=parseInt(e.target.value); val.textContent=e.target.value; }; box.appendChild(item); });
 }
-$('totalTiles').oninput=e=>{
-  let v=parseInt(e.target.value)||24;
-  v=Math.round(v/4)*4;                 // 對齊 4 的倍數，環形地圖才會剛好排滿
-  setup.totalTiles=Math.max(12,Math.min(36,v));
-};
+$('totalTiles').oninput=e=>{ let v=parseInt(e.target.value)||24; v=Math.round(v/4)*4; setup.totalTiles=Math.max(12,Math.min(36,v)); };
 $('totalTiles').addEventListener('change',e=>{ e.target.value=setup.totalTiles; });
-// 格子內容編輯器
+
+/* ---- 格子內容編輯器 ---- */
 const FIELD_META = { money:'💰', happy:'💖', growth:'🌱', health:'💪', pause:'⏸' };
-function buildOptGroup(title, cfg, fields){
-  const wrap=document.createElement('div'); wrap.className='tile-group';
-  const head=document.createElement('div'); head.className='tg-head'; head.textContent=title; wrap.appendChild(head);
-  const txtRow=document.createElement('div'); txtRow.className='tg-textrow';
-  const lbl=document.createElement('span'); lbl.textContent='情境文字：'; txtRow.appendChild(lbl);
-  const txt=document.createElement('input'); txt.type='text'; txt.className='tg-text'; txt.value=cfg.text;
-  txt.oninput=e=>cfg.text=e.target.value; txtRow.appendChild(txt); wrap.appendChild(txtRow);
-  const list=document.createElement('div'); list.className='tg-list'; wrap.appendChild(list);
-  const renderList=()=>{
-    list.innerHTML='';
-    cfg.items.forEach((it,idx)=>{
-      const row=document.createElement('div'); row.className='opt-row';
-      const lab=document.createElement('input'); lab.className='opt-label'; lab.value=it.label; lab.placeholder='選項文字';
-      lab.oninput=e=>it.label=e.target.value; row.appendChild(lab);
-      fields.forEach(f=>{
-        if(f==='fragment'){
-          const w=document.createElement('label'); w.className='opt-frag';
-          const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!it.fragment;
-          cb.onchange=e=>it.fragment=e.target.checked;
-          w.appendChild(cb); w.append('🧩碎片'); row.appendChild(w);
-        }else{
-          const w=document.createElement('span'); w.className='opt-num'; w.append(FIELD_META[f]);
-          const inp=document.createElement('input'); inp.type='number'; inp.value=it[f]||0;
-          inp.oninput=e=>it[f]=parseInt(e.target.value)||0;
-          w.appendChild(inp); row.appendChild(w);
-        }
-      });
-      const del=document.createElement('button'); del.className='opt-del'; del.textContent='✕';
-      del.onclick=()=>{ if(cfg.items.length<=1){alert('至少保留一個選項');return;} cfg.items.splice(idx,1); renderList(); };
-      row.appendChild(del); list.appendChild(row);
-    });
-  };
-  renderList();
-  const add=document.createElement('button'); add.className='opt-add'; add.textContent='＋ 新增選項';
-  add.onclick=()=>{ const it={label:'新選項',money:0,happy:0,growth:0,health:0}; if(fields.includes('pause'))it.pause=0; if(fields.includes('fragment'))it.fragment=false; cfg.items.push(it); renderList(); };
-  wrap.appendChild(add);
-  return wrap;
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+function group(title){ const g=el('div','tile-group'); g.appendChild(el('div','tg-head',title)); return g; }
+function sub(t){ return el('div','tg-sub',t); }
+function textRow(labelText,obj,key){ const r=el('div','tg-textrow'); r.appendChild(el('span',null,labelText)); const i=document.createElement('input'); i.type='text'; i.className='tg-text'; i.value=obj[key]||''; i.oninput=e=>obj[key]=e.target.value; r.appendChild(i); return r; }
+function numRow(labelText,obj,key){ const r=el('div','tg-textrow'); r.appendChild(el('span',null,labelText)); const i=document.createElement('input'); i.type='number'; i.style.width='90px'; i.value=obj[key]||0; i.oninput=e=>obj[key]=parseInt(e.target.value)||0; r.appendChild(i); return r; }
+function numSpan(obj,key){ const w=el('span','opt-num',FIELD_META[key]); const inp=document.createElement('input'); inp.type='number'; inp.value=obj[key]||0; inp.oninput=e=>obj[key]=parseInt(e.target.value)||0; w.appendChild(inp); return w; }
+function fragToggle(it){ const w=el('label','opt-frag'); const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!it.fragment; cb.onchange=e=>it.fragment=e.target.checked; w.appendChild(cb); w.append('🧩碎片'); return w; }
+function optListEl(items, fields, addLabel){
+  const frag=document.createDocumentFragment(); const list=el('div','tg-list'); frag.appendChild(list);
+  const render=()=>{ list.innerHTML=''; items.forEach((it,idx)=>{ const row=el('div','opt-row');
+    const lab=document.createElement('input'); lab.className='opt-label'; lab.value=it.label||''; lab.placeholder='選項文字'; lab.oninput=e=>it.label=e.target.value; row.appendChild(lab);
+    fields.forEach(f=> row.appendChild(f==='fragment'?fragToggle(it):numSpan(it,f)));
+    const del=el('button','opt-del','✕'); del.onclick=()=>{ if(items.length<=1){alert('至少保留一個');return;} items.splice(idx,1); render(); }; row.appendChild(del); list.appendChild(row); }); };
+  render(); const add=el('button','opt-add',addLabel||'＋ 新增'); add.onclick=()=>{ const it={label:'新選項',money:0,happy:0,growth:0,health:0}; if(fields.includes('pause'))it.pause=0; if(fields.includes('fragment'))it.fragment=false; items.push(it); render(); }; frag.appendChild(add); return frag;
 }
-function buildChanceGroup(){
-  const cfg=setup.tiles.chance;
-  const wrap=document.createElement('div'); wrap.className='tile-group';
-  const head=document.createElement('div'); head.className='tg-head'; head.textContent='🎲 命運格（命運卡池，隨機抽取）'; wrap.appendChild(head);
-  const list=document.createElement('div'); list.className='tg-list'; wrap.appendChild(list);
-  const renderList=()=>{
-    list.innerHTML='';
-    cfg.cards.forEach((c,idx)=>{
-      const row=document.createElement('div'); row.className='opt-row';
-      const txt=document.createElement('input'); txt.className='opt-label'; txt.value=c.text; txt.placeholder='命運卡文字';
-      txt.oninput=e=>c.text=e.target.value; row.appendChild(txt);
-      ['money','happy','growth','health'].forEach(f=>{
-        const w=document.createElement('span'); w.className='opt-num'; w.append(FIELD_META[f]);
-        const inp=document.createElement('input'); inp.type='number'; inp.value=c[f]||0;
-        inp.oninput=e=>c[f]=parseInt(e.target.value)||0;
-        w.appendChild(inp); row.appendChild(w);
-      });
-      const del=document.createElement('button'); del.className='opt-del'; del.textContent='✕';
-      del.onclick=()=>{ if(cfg.cards.length<=1){alert('至少保留一張命運卡');return;} cfg.cards.splice(idx,1); renderList(); };
-      row.appendChild(del); list.appendChild(row);
-    });
-  };
-  renderList();
-  const add=document.createElement('button'); add.className='opt-add'; add.textContent='＋ 新增命運卡';
-  add.onclick=()=>{ cfg.cards.push({text:'新命運卡',money:0,happy:0,growth:0,health:0}); renderList(); };
-  wrap.appendChild(add);
-  return wrap;
+function textBankEl(arr, ph, addLabel){
+  const frag=document.createDocumentFragment(); const list=el('div','tg-list'); frag.appendChild(list);
+  const render=()=>{ list.innerHTML=''; arr.forEach((v,idx)=>{ const row=el('div','opt-row'); const i=document.createElement('input'); i.className='opt-label'; i.value=v; i.placeholder=ph; i.oninput=e=>arr[idx]=e.target.value; row.appendChild(i);
+    const del=el('button','opt-del','✕'); del.onclick=()=>{ if(arr.length<=1){alert('至少保留一題');return;} arr.splice(idx,1); render(); }; row.appendChild(del); list.appendChild(row); }); };
+  render(); const add=el('button','opt-add',addLabel); add.onclick=()=>{ arr.push('新題目'); render(); }; frag.appendChild(add); return frag;
 }
+function cardBankEl(arr, fields, addLabel){
+  const frag=document.createDocumentFragment(); const list=el('div','tg-list'); frag.appendChild(list);
+  const render=()=>{ list.innerHTML=''; arr.forEach((c,idx)=>{ const row=el('div','opt-row'); const t=document.createElement('input'); t.className='opt-label'; t.value=c.text||''; t.placeholder='卡片文字'; t.oninput=e=>c.text=e.target.value; row.appendChild(t);
+    fields.forEach(f=> row.appendChild(numSpan(c,f)));
+    const del=el('button','opt-del','✕'); del.onclick=()=>{ if(arr.length<=1){alert('至少保留一張');return;} arr.splice(idx,1); render(); }; row.appendChild(del); list.appendChild(row); }); };
+  render(); const add=el('button','opt-add',addLabel); add.onclick=()=>{ const c={text:'新卡'}; fields.forEach(f=>c[f]=0); arr.push(c); render(); }; frag.appendChild(add); return frag;
+}
+function effectRowEl(labelText, obj, fields){ const row=el('div','opt-row'); row.appendChild(el('span','opt-label-static',labelText)); fields.forEach(f=> row.appendChild(numSpan(obj,f))); return row; }
+
 function renderTileEditor(){
   const box=$('tileEditor'); box.innerHTML='';
-  box.appendChild(buildOptGroup('🏪 商店格', setup.tiles.shop, ['money','happy','growth','health','fragment']));
-  box.appendChild(buildOptGroup('⚔️ 挑戰格', setup.tiles.challenge, ['money','happy','growth','health','pause']));
-  box.appendChild(buildOptGroup('❤️ 愛心格', setup.tiles.charity, ['money','happy','growth','health']));
-  box.appendChild(buildChanceGroup());
-}
-/* ---- 設定儲存：localStorage（本機）＋ Firebase Firestore（雲端跨裝置）---- */
-const LS_KEY='rabbitAdventureSetup_v1';
-const CLOUD_DOC = db ? db.collection('config').doc('teacherSettings') : null;
-let _resetting=false;
-function setCloudStatus(t){ const el=$('cloudStatus'); if(el) el.textContent=t; }
-
-function saveLocal(){ if(_resetting) return; try{ localStorage.setItem(LS_KEY, JSON.stringify(setup)); }catch(e){} }
-let _cloudTimer=null;
-function saveCloud(){
-  if(_resetting||!CLOUD_DOC) return;
-  clearTimeout(_cloudTimer);
-  _cloudTimer=setTimeout(()=>{
-    setCloudStatus('☁️ 同步中…');
-    CLOUD_DOC.set({ data: JSON.stringify(setup), updatedAt: Date.now() })
-      .then(()=>setCloudStatus('☁️ 已同步雲端'))
-      .catch(e=>{ console.warn(e); setCloudStatus('⚠️ 雲端同步失敗（仍存本機）'); });
-  },700);
-}
-function saveSetup(){ saveLocal(); saveCloud(); }        // 供 gameStart / beforeunload 呼叫
-let _saveTimer=null;
-function autoSave(){ clearTimeout(_saveTimer); _saveTimer=setTimeout(saveLocal,400); saveCloud(); }
-
-function applyLoaded(s){
-  if(!s||typeof s!=='object') return;
-  if(typeof s.maxRounds==='number') setup.maxRounds=s.maxRounds;
-  setup.customRound=!!s.customRound;
-  if(Array.isArray(s.chars)&&s.chars.length>=2) setup.chars=s.chars;
-  if(typeof s.totalTiles==='number') setup.totalTiles=s.totalTiles;
-  if(s.weights) setup.weights={...DEFAULT_WEIGHTS, ...s.weights};
-  if(s.tiles&&s.tiles.shop&&s.tiles.challenge&&s.tiles.charity&&s.tiles.chance) setup.tiles=s.tiles;
-}
-function loadLocal(){ try{ const raw=localStorage.getItem(LS_KEY); if(raw) applyLoaded(JSON.parse(raw)); }catch(e){} }
-function applySetupToUI(){
-  $('totalTiles').value=setup.totalTiles;
-  if(setup.customRound){ $('customRound').value=setup.maxRounds; $('customRoundRow').style.display='flex'; }
-  else $('customRoundRow').style.display='none';
-  renderRoundPills(); renderChars(); renderWeights(); renderTileEditor();
-}
-function loadFromCloud(){
-  if(!CLOUD_DOC){ setCloudStatus('（未連雲端，僅存本機）'); return; }
-  setCloudStatus('☁️ 讀取雲端設定…');
-  CLOUD_DOC.get().then(doc=>{
-    if(doc.exists && doc.data() && doc.data().data){
-      try{ applyLoaded(JSON.parse(doc.data().data)); applySetupToUI(); }catch(e){}
-      setCloudStatus('☁️ 已從雲端載入設定');
-    }else{
-      setCloudStatus('☁️ 雲端尚無設定，將自動建立');
-      saveCloud();
-    }
-  }).catch(e=>{ console.warn(e); setCloudStatus('⚠️ 讀取雲端失敗（改用本機設定）'); });
+  const shopG=group('🏪 商店格題庫（每次隨機顯示 3 個）'); shopG.append(textRow('情境文字：', setup.tiles.shop, 'text')); shopG.append(optListEl(setup.tiles.shop.items, ['money','happy','growth','health','fragment'], '＋ 新增商品')); box.appendChild(shopG);
+  const ch=setup.tiles.challenge; const chG=group('⚔️ 挑戰格（腦力激盪＋倒數計時）'); chG.append(numRow('倒數秒數：', ch, 'timerSec')); chG.append(sub('腦力激盪題庫')); chG.append(textBankEl(ch.questions,'題目','＋ 新增題目')); chG.append(sub('結果選項')); chG.append(optListEl(ch.items, ['money','happy','growth','health','pause'], '＋ 新增結果')); box.appendChild(chG);
+  const cc=setup.tiles.chance; const ccG=group('🎲 命運格（抽 1 張；可選擇陷害他組）'); ccG.append(numRow('抽卡動畫毫秒：', cc, 'drawMs')); ccG.append(sub('自身命運卡')); ccG.append(cardBankEl(cc.cards, ['money','happy','growth','health'], '＋ 新增命運卡')); ccG.append(sub('陷害卡（對方損失的值加到自己）')); ccG.append(cardBankEl(cc.sabotage, ['money','happy','growth'], '＋ 新增陷害卡')); box.appendChild(ccG);
+  const chaG=group('❤️ 愛心格'); chaG.append(textRow('情境文字：', setup.tiles.charity, 'text')); chaG.append(optListEl(setup.tiles.charity.items, ['money','happy','growth','health'], '＋ 新增選項')); box.appendChild(chaG);
+  const pk=setup.tiles.park; const pkG=group('🌳 公園格（可選擇做題目）'); pkG.append(sub('公園題庫')); pkG.append(textBankEl(pk.questions,'題目','＋ 新增題目')); pkG.append(sub('數值設定')); pkG.append(effectRowEl('📝 做題目獎勵', pk.doEffect, ['happy','growth','health'])); pkG.append(effectRowEl('🌳 直接休息', pk.skipEffect, ['happy','growth','health'])); box.appendChild(pkG);
 }
 
-// 先用本機快取即時顯示，再讓雲端資料覆蓋
-loadLocal();
-applySetupToUI();
-loadFromCloud();
+/* ===== 遊戲狀態 ===== */
+let G=null, history=[];
+const cur = ()=>G.players[G.save.current_turn];
 
-['input','change','click'].forEach(ev=> $('setup').addEventListener(ev, autoSave));
-$('resetSetup').onclick=()=>{
-  if(confirm('確定清除已記憶的設定，回復成預設值嗎？（雲端設定也會一併清除）')){
-    _resetting=true;
-    try{ localStorage.removeItem(LS_KEY); }catch(e){}
-    if(CLOUD_DOC) CLOUD_DOC.delete().catch(()=>{});
-    location.reload();
-  }
-};
-
-/* ---- 全螢幕 ---- */
-function toggleFullscreen(){
-  const el=document.documentElement;
-  if(!document.fullscreenElement && !document.webkitFullscreenElement){
-    (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);
-  }else{
-    (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document);
-  }
-}
-function updateFsLabel(){
-  const on=!!(document.fullscreenElement||document.webkitFullscreenElement);
-  document.querySelectorAll('.fs-btn').forEach(b=> b.textContent = on?'⛶ 離開全螢幕':'⛶ 全螢幕');
-}
-document.addEventListener('fullscreenchange', updateFsLabel);
-document.addEventListener('webkitfullscreenchange', updateFsLabel);
-document.querySelectorAll('.fs-btn').forEach(b=> b.onclick=toggleFullscreen);
-// 初始 UI 由上方 applySetupToUI() 負責渲染
-
-/* ==================================================
-   遊戲狀態（對應 DB schema：game_save / players / config）
-=================================================== */
-let G = null;
-let history = [];
-
-// === API: POST /api/game/start ===
 function gameStart(){
-  Sound.ensure();
-  saveSetup();
-  const chosen = setup.chars.filter(c=>c.on);
-  const map = buildMap(setup.totalTiles, setup.weights);
-  G = {
+  Sound.ensure(); saveSetup();
+  const map=buildMap(setup.totalTiles, setup.weights);
+  G={
     save:{ save_name:'課堂存檔', current_turn:0, current_round:1, max_rounds:setup.maxRounds },
-    players: chosen.map((c,i)=>({
-      id:i, name:c.name.trim()||('角色'+(i+1)), emoji:c.emoji, color:c.color,
-      position:0, money:c.money, happy:c.happy, growth:c.growth, health:c.health,
-      is_vip:false, paused_turns:0, reviveStats:[],
-      fragments: c.fragments.map(n=>({name:n, got:false})),
+    players: setup.teams.map((t,i)=>({
+      id:i, name:(t.name||'').trim()||('第'+(i+1)+'組'), color:TEAM_COLORS[i],
+      position:0, money:200, happy:3, growth:3, health:8,
+      is_vip:false, insurance:0, paused_turns:0, reviveStats:[],
+      fragments: FRAG_NAMES.map(n=>({name:n, got:false})),
     })),
     config:{ map, tiles: JSON.parse(JSON.stringify(setup.tiles)) },
-    busy:false, dice:'🎲',
-    turn:{ rolled:false, resolved:true }, // resolved=true 代表沒有待處理事件
+    busy:false, turn:{ rolled:false, resolved:true },
   };
   history=[];
-  $('setup').classList.add('hidden');
-  $('game').classList.remove('hidden');
-  buildBoard();
-  refreshAll();
-  toast('輪到 '+cur().name+'，請擲骰子！');
+  $('setup').classList.add('hidden'); $('game').classList.remove('hidden');
+  setupDicePad(); buildBoard(); refreshAll();
+  toast('輪到 '+cur().name+'，請講者輸入骰子點數');
 }
 
+/* ---- 地圖：長方形環狀、相鄰不重複 ---- */
 function buildMap(total, weights){
-  const map=[{type:'start'}];
   const slots=total-1;
   const keys=Object.keys(weights).filter(k=>weights[k]>0);
   const sum=keys.reduce((a,k)=>a+weights[k],0)||1;
@@ -683,459 +520,377 @@ function buildMap(total, weights){
   keys.forEach(k=>{ const n=Math.round(slots*weights[k]/sum); for(let i=0;i<n;i++) pool.push(k); });
   while(pool.length<slots) pool.push(keys[Math.floor(Math.random()*keys.length)]||'park');
   pool=pool.slice(0,slots);
-  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
-  pool.forEach(t=>map.push({type:t}));
+  const arranged=arrangeNoAdjacent(pool);
+  const map=[{type:'start'}]; arranged.forEach(t=>map.push({type:t}));
   return map;
 }
-const cur = ()=>G.players[G.save.current_turn];
-
-/* ==================================================
-   棋盤渲染
-=================================================== */
-let tileEls=[];
-function ringLayout(total){
-  const perSide=Math.ceil(total/4), size=perSide+1, ring=[];
-  for(let c=0;c<size;c++) ring.push([0,c]);
-  for(let r=1;r<size;r++) ring.push([r,size-1]);
-  for(let c=size-2;c>=0;c--) ring.push([size-1,c]);
-  for(let r=size-2;r>=1;r--) ring.push([r,0]);
-  const coords=[];
-  for(let i=0;i<total;i++) coords.push(ring[Math.round(i*ring.length/total)%ring.length]);
-  return {coords,size};
+function arrangeNoAdjacent(arr){
+  const remaining={}; arr.forEach(t=>remaining[t]=(remaining[t]||0)+1);
+  const res=[]; let prev=null;
+  for(let i=0;i<arr.length;i++){
+    let best=null,bestC=-1;
+    for(const k in remaining){ if(remaining[k]>0 && k!==prev && remaining[k]>bestC){ best=k; bestC=remaining[k]; } }
+    if(best===null){ for(const k in remaining){ if(remaining[k]>0){ best=k; break; } } }
+    res.push(best); remaining[best]--; prev=best;
+  }
+  return res;
 }
+function rectLayout(total){
+  const s=total/2+2;            // C+R
+  let C=Math.round(s*1.7/2.7), R=s-C;
+  if(R<3){ R=3; C=s-R; } if(C<3){ C=3; R=s-C; }
+  if(C<R){ const t=C; C=R; R=t; }
+  const ring=[];
+  for(let c=0;c<C;c++) ring.push([0,c]);
+  for(let r=1;r<R;r++) ring.push([r,C-1]);
+  for(let c=C-2;c>=0;c--) ring.push([R-1,c]);
+  for(let r=R-2;r>=1;r--) ring.push([r,0]);
+  return {ring,C,R};
+}
+let tileEls=[];
 function buildBoard(){
   const board=$('board'); board.innerHTML=''; tileEls=[];
-  const map=G.config.map;
-  const {coords,size}=ringLayout(map.length);
-  const avail=Math.min(window.innerWidth*0.64, window.innerHeight*0.66);
-  const px=Math.max(52,Math.min(104,Math.floor((avail-size*5)/size)));
-  board.style.setProperty('--tile', px+'px');
-  board.style.gridTemplateColumns=`repeat(${size},${px}px)`;
-  board.style.gridTemplateRows=`repeat(${size},${px}px)`;
-  const center=document.createElement('div');
-  center.className='board-center';
-  center.style.gridColumn=`2 / ${size}`; center.style.gridRow=`2 / ${size}`;
-  center.innerHTML=`<div class="bc-dice" id="bcDice">🎲</div><div class="bc-title">兔子錢大冒險</div><div class="bc-sub" id="bcSub">點「擲骰子」開始</div>`;
+  const map=G.config.map; const {ring,C,R}=rectLayout(map.length);
+  const area=$('mapArea');
+  const mapW=(area.clientWidth||window.innerWidth-240)-12;
+  const mapH=(area.clientHeight||window.innerHeight*0.6)-12;
+  const px=Math.max(40, Math.min(Math.floor((mapW-C*5)/C), Math.floor((mapH-R*5)/R)));
+  board.style.setProperty('--tile',px+'px');
+  board.style.gridTemplateColumns=`repeat(${C},${px}px)`;
+  board.style.gridTemplateRows=`repeat(${R},${px}px)`;
+  const center=el('div','board-center'); center.style.gridColumn=`2 / ${C}`; center.style.gridRow=`2 / ${R}`;
+  center.innerHTML=`<div class="bc-dice" id="bcDice">🎲</div><div class="bc-title">兔子錢大冒險</div><div class="bc-sub" id="bcSub">請講者輸入骰子點數</div>`;
   board.appendChild(center);
-  map.forEach((t,i)=>{
-    const [r,c]=coords[i];
-    const el=document.createElement('div');
-    el.className='tile t-'+t.type;
-    el.style.gridRow=r+1; el.style.gridColumn=c+1;
-    el.innerHTML=`<span class="t-no">${i}</span><span class="t-emoji">${TILE[t.type].emoji}</span><span class="t-label">${TILE[t.type].label}</span><div class="t-tokens"></div>`;
-    board.appendChild(el); tileEls[i]=el;
-  });
+  map.forEach((t,i)=>{ const [r,c]=ring[i]; const e=el('div','tile t-'+t.type); e.style.gridRow=r+1; e.style.gridColumn=c+1;
+    e.innerHTML=`<span class="t-no">${i}</span><span class="t-emoji">${TILE[t.type].emoji}</span><span class="t-label">${TILE[t.type].label}</span><div class="t-tokens"></div>`; board.appendChild(e); tileEls[i]=e; });
   renderTokens();
 }
 function renderTokens(){
-  tileEls.forEach(el=>el.querySelector('.t-tokens').innerHTML='');
-  G.players.forEach(p=>{
-    const tk=document.createElement('div'); tk.className='tk'; tk.style.background=p.color; tk.textContent=p.emoji; tk.dataset.pid=p.id;
-    tileEls[p.position].querySelector('.t-tokens').appendChild(tk);
-  });
+  tileEls.forEach(e=>e.querySelector('.t-tokens').innerHTML='');
+  G.players.forEach(p=>{ const tk=el('div','tk'); tk.style.background=p.color; tk.textContent=(p.id+1); tk.dataset.pid=p.id; tileEls[p.position].querySelector('.t-tokens').appendChild(tk); });
 }
 
-/* ==================================================
-   儀表板 / 狀態列
-=================================================== */
+/* ---- 狀態 / 儀表板 ---- */
 function refreshAll(){ renderTop(); renderDash(); renderButtons(); }
-function renderTop(){
-  const p=cur();
-  $('roundChip').textContent=`第 ${G.save.current_round} / ${G.save.max_rounds} 回合`;
-  const b=$('turnBanner');
-  b.innerHTML=`${p.emoji} 現在輪到 ${escapeHtml(p.name)}`;
-  b.style.background=p.color;
-}
-function bar(ico,key,val){
-  let cells='';
-  for(let i=0;i<10;i++) cells+=`<span class="seg${i<val?' on '+key:''}"></span>`;
-  return `<div class="bar"><span class="b-ico">${ico}</span>
-    <span class="b-cells">${cells}</span>
-    <span class="b-val">${val}</span></div>`;
-}
+function renderTop(){ const p=cur(); $('roundChip').textContent=`第 ${G.save.current_round} / ${G.save.max_rounds} 回合`; const b=$('turnBanner'); b.innerHTML=`現在輪到 <b>${escapeHtml(p.name)}</b>`; b.style.background=p.color; }
+function bar(ico,key,val){ let c=''; for(let i=0;i<10;i++) c+=`<span class="seg${i<val?' on '+key:''}"></span>`; return `<div class="bar"><span class="b-ico">${ico}</span><span class="b-cells">${c}</span><span class="b-val">${val}</span></div>`; }
 function renderDash(){
   const dash=$('dash'); dash.innerHTML='';
   G.players.forEach(p=>{
-    const card=document.createElement('div');
-    card.className='pcard'+(p.id===G.save.current_turn?' active':'')+(p.paused_turns>0?' paused':'');
-    card.dataset.pid=p.id;
-    const badges=[];
-    if(p.is_vip) badges.push('<span class="badge vip">🏦VIP</span>');
-    if(p.paused_turns>0) badges.push(`<span class="badge pause">⏸${p.paused_turns}</span>`);
+    const card=el('div','pcard'+(p.id===G.save.current_turn?' active':'')+(p.paused_turns>0?' paused':'')); card.dataset.pid=p.id;
+    const badges=[]; if(p.is_vip) badges.push('<span class="badge vip">🏦VIP</span>'); if(p.insurance>0) badges.push(`<span class="badge ins">🛡️${p.insurance}</span>`); if(p.paused_turns>0) badges.push(`<span class="badge pause">⏸${p.paused_turns}</span>`);
     const frags=p.fragments.map(f=>`<div class="frag${f.got?' got':''}" title="${escapeHtml(f.name)}">${f.got?'🧩':'○'}</div>`).join('');
-    card.innerHTML=`
-      <div class="pc-badges">${badges.join('')}</div>
-      <div class="pc-head">
-        <span class="pc-avatar">${p.emoji}</span>
-        <span class="pc-name" style="color:${p.color}">${escapeHtml(p.name)}</span>
-        <span class="pc-money${p.money<0?' neg':''}">💰${p.money}</span>
-      </div>
-      <div class="pc-bars">
-        ${bar('💖','happy',p.happy)}
-        ${bar('🌱','growth',p.growth)}
-        ${bar('💪','health',p.health)}
-      </div>
+    card.innerHTML=`<div class="pc-badges">${badges.join('')}</div>
+      <div class="pc-head"><span class="disc" style="background:${p.color}">${p.id+1}</span><span class="pc-name" style="color:${p.color}">${escapeHtml(p.name)}</span><span class="pc-money${p.money<0?' neg':''}">💰${p.money}</span></div>
+      <div class="pc-bars">${bar('💖','happy',p.happy)}${bar('🌱','growth',p.growth)}${bar('💪','health',p.health)}</div>
       <div class="pc-frags">🧩 ${frags}</div>`;
     dash.appendChild(card);
   });
 }
-function bump(pid){
-  const el=document.querySelector(`.pcard[data-pid="${pid}"]`);
-  if(el){ el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
-}
+function bump(pid){ const e=document.querySelector(`.pcard[data-pid="${pid}"]`); if(e){ e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); } }
 function renderButtons(){
-  const playing = G && !$('results').classList.contains('hidden')===false;
-  const busy=G.busy;
-  $('btnRoll').disabled = busy || G.turn.rolled;
-  $('btnEnd').disabled  = busy || !G.turn.rolled || !G.turn.resolved;
+  const busy=G.busy, canRoll=!busy && !G.turn.rolled;
+  document.querySelectorAll('.dice-btn').forEach(b=> b.disabled=!canRoll);
+  const di=$('diceInput'), dg=$('diceGo'); if(di) di.disabled=!canRoll; if(dg) dg.disabled=!canRoll;
+  $('btnEnd').disabled = busy || !G.turn.rolled || !G.turn.resolved;
   $('btnUndo').disabled = history.length===0 || busy;
 }
 
-/* ==================================================
-   復原（快照）
-=================================================== */
-function snapshot(){
-  history.push(JSON.stringify({ save:G.save, players:G.players, turn:G.turn, dice:G.dice }));
-  if(history.length>50) history.shift();
-}
-$('btnUndo').onclick=()=>{
-  if(!history.length||G.busy) return;
-  sfx.click();
-  const s=JSON.parse(history.pop());
-  G.save=s.save; G.players=s.players; G.turn=s.turn; G.dice=s.dice;
-  closeModal(); renderTokens(); refreshAll(); toast('已復原上一步');
-};
+/* ---- 復原 ---- */
+function snapshot(){ history.push(JSON.stringify({save:G.save,players:G.players,turn:G.turn})); if(history.length>50) history.shift(); }
+$('btnUndo').onclick=()=>{ if(!history.length||G.busy) return; sfx.click(); const s=JSON.parse(history.pop()); G.save=s.save; G.players=s.players; G.turn=s.turn; closeModal(); renderTokens(); refreshAll(); toast('已復原上一步'); };
 
-/* ==================================================
-   API: roll / action / end-turn
-=================================================== */
-// POST /api/game/{save}/player/{id}/roll
-$('btnRoll').onclick=async ()=>{
-  if(G.busy||G.turn.rolled) return;
-  snapshot();
-  G.busy=true; renderButtons();
-  sfx.dice();
-  const bc=$('bcDice'), ctrl=$('ctrlDice');
-  bc.classList.add('rolling');
-  for(let i=0;i<12;i++){ const f=DICE[Math.floor(Math.random()*6)]; bc.textContent=f; ctrl.textContent=f; await sleep(55); }
-  const roll=Math.floor(Math.random()*6)+1;
-  bc.classList.remove('rolling'); bc.textContent=DICE[roll-1]; $('ctrlDice').textContent=DICE[roll-1];
-  $('ctrlDiceTxt').textContent=cur().name+' 擲出 '+roll+' 點';
-  $('bcSub').textContent=cur().name+' 擲出 '+roll+' 點';
+/* ---- 實體骰子：講者輸入點數 ---- */
+function setupDicePad(){ const pad=$('dicePad'); pad.innerHTML=''; for(let n=1;n<=6;n++){ const b=el('button','dice-btn',n); b.onclick=()=>move(n); pad.appendChild(b); } }
+$('diceGo').onclick=()=>{ const v=parseInt($('diceInput').value); if(v>=1){ $('diceInput').value=''; move(v); } };
 
+async function move(n){
+  if(!G||G.busy||G.turn.rolled||!n||n<1) return;
+  snapshot(); G.busy=true; renderButtons();
   const p=cur();
+  const face=(n>=1&&n<=6)?DICE[n-1]:('+'+n);
+  $('ctrlDice').textContent=face; $('bcDice').textContent=face;
+  $('ctrlDiceTxt').textContent=p.name+' 前進 '+n; $('bcSub').textContent=p.name+' 前進 '+n+' 步';
   let passedStart=false;
-  for(let s=1;s<=roll;s++){
+  for(let s=1;s<=n;s++){
     p.position=(p.position+1)%G.config.map.length;
     const tt=G.config.map[p.position].type;
     if(tt==='start') passedStart=true;
-    // 中途經過銀行：VIP 自動 +20（系統利息）
-    if(s<roll && p.is_vip && tt==='bank'){ p.money+=20; renderDash(); bump(p.id); sfx.gain(); toast('🏦 '+p.name+' VIP 利息 +20 元'); }
+    if(s<n && p.is_vip && tt==='bank'){ p.money+=VIP_INTEREST; renderDash(); bump(p.id); sfx.gain(); toast('🏦 '+p.name+' VIP 利息 +'+VIP_INTEREST); }
     renderTokens(); sfx.step();
-    const tk=tileEls[p.position].querySelector(`.tk[data-pid="${p.id}"]`);
-    if(tk) tk.classList.add('moving');
-    await sleep(300);
-    if(tk) tk.classList.remove('moving');
+    const tk=tileEls[p.position].querySelector(`.tk[data-pid="${p.id}"]`); if(tk) tk.classList.add('moving');
+    await sleep(300); if(tk) tk.classList.remove('moving');
   }
-  G.turn.rolled=true; G.turn.resolved=false;
-  G.busy=false; renderButtons();
-  // 經過（非停留）起點：領取實體 200 元（系統不記錄金錢）
+  G.turn.rolled=true; G.turn.resolved=false; G.busy=false; renderButtons();
   if(passedStart && G.config.map[p.position].type!=='start'){ sfx.pass(); toast('🏁 '+p.name+' 經過起點！請發實體 200 元（系統不記錄）'); }
   openTileModal(p, G.config.map[p.position]);
-};
+}
 
-// POST /api/game/{save}/player/{id}/action  → 套用格子事件
+/* ---- 效果套用 ---- */
 function applyEffect(p, eff){
-  if(eff.money) p.money += eff.money;
-  if(eff.happy) p.happy = clamp(p.happy+eff.happy);
-  if(eff.growth) p.growth = clamp(p.growth+eff.growth);
-  if(eff.health) p.health = clamp(p.health+eff.health);
+  if(eff.money) p.money+=eff.money;
+  if(eff.happy) p.happy=clamp(p.happy+eff.happy);
+  if(eff.growth) p.growth=clamp(p.growth+eff.growth);
+  if(eff.health) p.health=clamp(p.health+eff.health);
   if(eff.fragment){ const f=p.fragments.find(x=>!x.got); if(f) f.got=true; }
   if(eff.vip) p.is_vip=true;
-  if(eff.pause) p.paused_turns += eff.pause;
+  if(eff.insurance) p.insurance=(p.insurance||0)+eff.insurance;
+  if(eff.pause) p.paused_turns+=eff.pause;
   renderDash(); bump(p.id);
 }
-function resolveEvent(p, eff, msg){
-  snapshot();
-  applyEffect(p, eff);
-  G.turn.resolved=true;
-  closeModal(); renderButtons();
-  if(eff.fragment) sfx.fragment();
-  else if(eff.vip) sfx.vip();
-  else if(eff.happy>0||eff.growth>0||eff.health>0||eff.money>0) sfx.gain();
-  else if(eff.money<0) sfx.buy();
-  else sfx.click();
-  if(msg) toast(msg);
-}
-
-// POST /api/game/{save}/player/{id}/end-turn
-$('btnEnd').onclick=()=>{
-  if(G.busy||!G.turn.rolled||!G.turn.resolved) return;
-  sfx.click();
-  snapshot();
-  const p=cur();
-  // 日常消耗
-  p.health=clamp(p.health-1);
-  renderDash(); bump(p.id);
-  // 強制休養：健康 或 幸福 歸零
-  const zero=[];
-  if(p.health<=0) zero.push('health');
-  if(p.happy<=0) zero.push('happy');
-  if(zero.length){
-    p.money-=MEDICAL_FEE;
-    p.paused_turns+=1;
-    zero.forEach(s=>{ if(!p.reviveStats.includes(s)) p.reviveStats.push(s); });
-    renderDash(); bump(p.id);
-    showCrisisModal(p, zero);
-    return; // 等老師按確認後才換人
-  }
-  advanceTurn();
-};
-function showCrisisModal(p, zero){
-  const hasH=zero.includes('health'), hasHappy=zero.includes('happy');
-  const emoji = hasH ? '🚑' : '😢';
-  const title = (hasH&&hasHappy) ? '緊急照護！' : hasH ? '強制送醫！' : '心情崩潰，強制休息！';
-  const reason = (hasH&&hasHappy) ? '健康值與幸福值都歸零了' : hasH ? '健康值歸零' : '幸福值歸零';
-  const reviveTxt = zero.map(s=> s==='health'?'健康值':'幸福值').join('、');
-  if(hasH) sfx.medical(); else sfx.sad();
-  const layer=$('modalLayer');
-  layer.innerHTML=`<div class="modal">
-    <div class="m-emoji">${emoji}</div>
-    <div class="m-title" style="color:var(--danger-d)">${title}</div>
-    <div class="m-who">${p.emoji} ${escapeHtml(p.name)}</div>
-    <div class="m-text">${reason}，需要好好休養！<br>扣除照護費 <b>${MEDICAL_FEE} 元</b>，並<b>暫停一回合</b>。<br>暫停結束後 ${reviveTxt} 會恢復為 ${REVIVE_HEALTH}。</div>
-    <div class="m-opts"><button class="opt warn" data-x>😢 知道了，換下一位</button></div>
-  </div>`;
-  layer.classList.remove('hidden');
-  layer.querySelector('[data-x]').onclick=()=>{ sfx.click(); closeModal(); advanceTurn(); };
-}
-function advanceTurn(){
-  closeModal();
-  let guard=0;
-  while(guard++<G.players.length*3){
-    G.save.current_turn=(G.save.current_turn+1)%G.players.length;
-    if(G.save.current_turn===0){
-      G.save.current_round++;
-      if(G.save.current_round>G.save.max_rounds){ endGame(); return; }
-    }
-    const np=G.players[G.save.current_turn];
-    if(np.paused_turns>0){
-      np.paused_turns--;
-      if(np.paused_turns===0){
-        const rev=(np.reviveStats&&np.reviveStats.length)?np.reviveStats:['health'];
-        rev.forEach(s=>{ np[s]=REVIVE_HEALTH; });
-        const revTxt=rev.map(s=> s==='health'?'健康':'幸福').join('、');
-        np.reviveStats=[];
-        toast('⏰ '+np.name+' 暫停結束，'+revTxt+'恢復為 '+REVIVE_HEALTH);
-      }
-      else toast('⏸ '+np.name+' 暫停中，跳過本回合');
-      renderDash();
-      continue;
-    }
-    break;
-  }
-  G.turn={rolled:false, resolved:true};
-  $('bcDice').textContent='🎲'; $('bcSub').textContent='點「擲骰子」開始';
-  $('ctrlDice').textContent='🎲'; $('ctrlDiceTxt').textContent='準備擲骰';
-  renderTokens(); refreshAll();
-  sfx.turn();
-  toast('輪到 '+cur().name+'，請擲骰子！');
-}
-
-/* ==================================================
-   格子事件彈窗
-=================================================== */
-function optRow(cls, label, effText, handler, disabled){
-  const b=document.createElement('button');
-  b.className='opt '+cls; b.disabled=!!disabled;
-  b.innerHTML=`<span>${label}</span>${effText?`<span class="o-eff">${effText}</span>`:''}`;
-  if(!disabled) b.onclick=handler;
-  return b;
-}
-function effOf(it){ return {money:it.money||0, happy:it.happy||0, growth:it.growth||0, health:it.health||0, fragment:!!it.fragment, pause:it.pause||0}; }
-function effText(it){
-  const a=[];
+function effOf(it){ return {money:it.money||0, happy:it.happy||0, growth:it.growth||0, health:it.health||0, fragment:!!it.fragment, vip:!!it.vip, insurance:it.insurance||0, pause:it.pause||0}; }
+function effText(it){ const a=[];
   if(it.money) a.push((it.money>0?'+':'')+it.money+'元');
   if(it.happy) a.push('💖'+(it.happy>0?'+':'')+it.happy);
   if(it.growth) a.push('🌱'+(it.growth>0?'+':'')+it.growth);
   if(it.health) a.push('💪'+(it.health>0?'+':'')+it.health);
   if(it.fragment) a.push('🧩碎片');
+  if(it.vip) a.push('🏦VIP');
+  if(it.insurance) a.push('🛡️保險卡');
   if(it.pause) a.push('⏸暫停'+it.pause);
   return a.join(' ');
 }
-function optCls(it){
-  if(it.fragment) return 'special';
-  if(it.money<0) return 'buy';
-  if(it.money>0||it.happy>0||it.growth>0||it.health>0) return 'good';
-  return 'plain';
+function optCls(it){ if(it.fragment||it.vip||it.insurance) return 'special'; if(it.money<0) return 'buy'; if(it.money>0||it.happy>0||it.growth>0||it.health>0) return 'good'; return 'plain'; }
+function optRow(cls,label,eff,handler,disabled){ const b=el('button','opt '+cls); b.disabled=!!disabled; b.innerHTML=`<span>${label}</span>${eff?`<span class="o-eff">${eff}</span>`:''}`; if(!disabled) b.onclick=handler; return b; }
+function teamTag(p){ return `<span class="disc-inline" style="background:${p.color}">${p.id+1}</span> ${escapeHtml(p.name)}`; }
+
+function resolveEvent(p, eff, msg){
+  snapshot(); applyEffect(p, eff); G.turn.resolved=true; stopCh(); closeModal(); renderButtons();
+  if(eff.fragment) sfx.fragment(); else if(eff.vip||eff.insurance) sfx.vip();
+  else if(eff.happy>0||eff.growth>0||eff.health>0||eff.money>0) sfx.gain();
+  else if(eff.money<0) sfx.buy(); else sfx.click();
+  if(msg) toast(msg);
 }
-function openTileModal(p, tile){
+
+/* ---- 回合 / 換隊 / 送醫 ---- */
+$('btnEnd').onclick=()=>{
+  if(G.busy||!G.turn.rolled||!G.turn.resolved) return; sfx.click(); snapshot();
+  const p=cur(); p.health=clamp(p.health-1); renderDash(); bump(p.id);
+  const zero=[]; if(p.health<=0) zero.push('health'); if(p.happy<=0) zero.push('happy');
+  if(zero.length){ p.money-=MEDICAL_FEE; p.paused_turns+=1; zero.forEach(s=>{ if(!p.reviveStats.includes(s)) p.reviveStats.push(s); }); renderDash(); bump(p.id); showCrisisModal(p,zero); return; }
+  advanceTurn();
+};
+function showCrisisModal(p, zero){
+  const hasH=zero.includes('health'), hasHappy=zero.includes('happy');
+  const emoji=hasH?'🚑':'😢'; const title=(hasH&&hasHappy)?'緊急照護！':hasH?'強制送醫！':'心情崩潰，強制休息！';
+  const reason=(hasH&&hasHappy)?'健康值與幸福值都歸零了':hasH?'健康值歸零':'幸福值歸零';
+  const rev=zero.map(s=>s==='health'?'健康值':'幸福值').join('、');
+  if(hasH) sfx.medical(); else sfx.sad();
   const layer=$('modalLayer');
-  const info=TILE[tile.type];
-  layer.innerHTML=`<div class="modal">
-    <div class="m-emoji">${info.emoji}</div>
-    <div class="m-title" style="color:${p.color}">${info.label}格</div>
-    <div class="m-who">${p.emoji} ${escapeHtml(p.name)}　💰${p.money} 元</div>
-    <div class="m-text" id="mText"></div>
-    <div class="m-opts" id="mOpts"></div>
-  </div>`;
+  layer.innerHTML=`<div class="modal"><div class="m-emoji">${emoji}</div><div class="m-title" style="color:var(--danger-d)">${title}</div><div class="m-who">${teamTag(p)}</div><div class="m-text">${reason}，需要好好休養！<br>扣除照護費 <b>${MEDICAL_FEE} 元</b>，並<b>暫停一回合</b>。<br>暫停結束後 ${rev} 會恢復為 ${REVIVE_HEALTH}。</div><div class="m-opts"><button class="opt warn" data-x>😢 知道了，換下一組</button></div></div>`;
   layer.classList.remove('hidden');
-  const text=$('mText'), opts=$('mOpts');
+  layer.querySelector('[data-x]').onclick=()=>{ sfx.click(); closeModal(); advanceTurn(); };
+}
+function advanceTurn(){
+  closeModal(); let guard=0;
+  while(guard++<G.players.length*3){
+    G.save.current_turn=(G.save.current_turn+1)%G.players.length;
+    if(G.save.current_turn===0){ G.save.current_round++; if(G.save.current_round>G.save.max_rounds){ endGame(); return; } }
+    const np=G.players[G.save.current_turn];
+    if(np.paused_turns>0){ np.paused_turns--; if(np.paused_turns===0){ const rev=(np.reviveStats&&np.reviveStats.length)?np.reviveStats:['health']; rev.forEach(s=>np[s]=REVIVE_HEALTH); const rt=rev.map(s=>s==='health'?'健康':'幸福').join('、'); np.reviveStats=[]; toast('⏰ '+np.name+' 暫停結束，'+rt+'恢復為 '+REVIVE_HEALTH); } else toast('⏸ '+np.name+' 暫停中，跳過本回合'); renderDash(); continue; }
+    break;
+  }
+  G.turn={rolled:false, resolved:true};
+  $('bcDice').textContent='🎲'; $('bcSub').textContent='請講者輸入骰子點數'; $('ctrlDice').textContent='🎲'; $('ctrlDiceTxt').textContent='請輸入骰子點數';
+  renderTokens(); refreshAll(); sfx.turn(); toast('輪到 '+cur().name+'，請輸入骰子點數');
+}
 
-  const afford=cost=>p.money>=cost;
-
-  if(tile.type==='shop'){
-    const cfg=G.config.tiles.shop;
-    text.textContent=cfg.text;
-    const allFrag=p.fragments.every(f=>f.got);
-    const nextFrag=p.fragments.find(f=>!f.got);
-    cfg.items.forEach(it=>{
-      let label=it.label;
-      if(it.fragment) label = allFrag ? it.label+'（已集滿）' : it.label+(nextFrag?'：'+nextFrag.name:'');
-      const disabled=(it.money<0 && p.money < -it.money) || (it.fragment && allFrag);
-      opts.append(optRow(optCls(it), label, effText(it), ()=>resolveEvent(p, effOf(it), '完成購買'), disabled));
-    });
-    opts.append(optRow('plain','🚪 這次先不買','',()=>resolveEvent(p,{},'離開商店')));
-  }
-  else if(tile.type==='challenge'){
-    const cfg=G.config.tiles.challenge;
-    text.textContent=cfg.text;
-    cfg.items.forEach(it=>{
-      const disabled=(it.money<0 && p.money < -it.money);
-      opts.append(optRow(optCls(it), it.label, effText(it), ()=>resolveEvent(p, effOf(it), '挑戰結算'), disabled));
-    });
-  }
-  else if(tile.type==='bank'){
-    if(p.is_vip){
-      text.textContent='你已經是銀行 VIP 囉！經過起點或銀行都會自動獲得利息 +20 元。';
-      opts.append(optRow('info','✅ 好的，繼續冒險','',()=>resolveEvent(p,{},'')));
-    }else{
-      text.textContent='來到銀行！要不要存 100 元成為 VIP？之後每次經過起點/銀行都會自動 +20 元利息。';
-      opts.append(
-        optRow('special','🏦 存入 100 元（成為 VIP）','−100元 🏦VIP',
-          ()=>resolveEvent(p,{money:-100,vip:true},'成為銀行 VIP！'), !afford(100)),
-        optRow('plain','🙅 這次不存','',()=>resolveEvent(p,{},'')),
-      );
-    }
-  }
-  else if(tile.type==='charity'){
-    const cfg=G.config.tiles.charity;
-    text.textContent=cfg.text;
-    cfg.items.forEach(it=>{
-      const disabled=(it.money<0 && p.money < -it.money);
-      opts.append(optRow(optCls(it), it.label, effText(it), ()=>resolveEvent(p, effOf(it), '愛心結算'), disabled));
-    });
-  }
-  else if(tile.type==='park'){
-    text.textContent='來到公園散步休息，身心都放鬆了～';
-    opts.append(optRow('good','🌳 享受公園時光','💪+1 💖+1',
-      ()=>resolveEvent(p,{health:1,happy:1},'健康+1、幸福+1')));
-  }
-  else if(tile.type==='chance'){
-    // 抽命運卡（從後台命運卡池隨機）
-    const cards=G.config.tiles.chance.cards;
-    const card=cards[Math.floor(Math.random()*cards.length)];
-    text.innerHTML='🎲 命運卡：<br><b>'+escapeHtml(card.text)+'</b>';
-    opts.append(optRow('special','✨ 接受命運', effText(card),
-      ()=>resolveEvent(p, effOf(card), '命運卡結算完成')));
-  }
-  else if(tile.type==='start'){
-    text.textContent='抵達夢想起點！請領取實體 200 元（系統不記錄金錢）。';
-    opts.append(optRow('info','🏁 已領 200 元，繼續冒險','實體+200元',
-      ()=>{ sfx.pass(); resolveEvent(p,{},'請發給 '+p.name+' 實體 200 元'); }));
+/* ---- 格子事件彈窗 ---- */
+function openTileModal(p, tile){
+  switch(tile.type){
+    case 'shop': openShop(p); break; case 'challenge': openChallenge(p); break;
+    case 'bank': openBank(p); break; case 'charity': openCharity(p); break;
+    case 'park': openPark(p); break; case 'chance': openChance(p); break;
+    case 'start': openStart(p); break;
   }
 }
-function closeModal(){ $('modalLayer').classList.add('hidden'); $('modalLayer').innerHTML=''; }
+function modalShell(p, emoji, title, textHtml){
+  const layer=$('modalLayer');
+  layer.innerHTML=`<div class="modal"><div class="m-emoji">${emoji}</div><div class="m-title" style="color:${p.color}">${title}</div><div class="m-who">${teamTag(p)}　💰${p.money} 元</div><div class="m-text">${textHtml}</div><div class="m-opts" id="mOpts"></div></div>`;
+  layer.classList.remove('hidden'); return $('mOpts');
+}
+function openShop(p){
+  const cfg=G.config.tiles.shop; const opts=modalShell(p,'🏪','商店格', escapeHtml(cfg.text));
+  const pool=cfg.items.slice(); for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  const pick=pool.slice(0,Math.min(3,pool.length)); const allFrag=p.fragments.every(f=>f.got); const nf=p.fragments.find(f=>!f.got);
+  pick.forEach(it=>{ let label=it.label; if(it.fragment) label=allFrag?it.label+'（已集滿）':it.label+(nf?'：'+nf.name:''); const dis=(it.money<0&&p.money< -it.money)||(it.fragment&&allFrag); opts.append(optRow(optCls(it),label,effText(it),()=>resolveEvent(p,effOf(it),'完成購買'),dis)); });
+  opts.append(optRow('plain','🚪 這次先不買','',()=>resolveEvent(p,{},'離開商店')));
+}
+function openCharity(p){
+  const cfg=G.config.tiles.charity; const opts=modalShell(p,'❤️','愛心格', escapeHtml(cfg.text));
+  cfg.items.forEach(it=>{ const dis=(it.money<0&&p.money< -it.money); opts.append(optRow(optCls(it),it.label,effText(it),()=>resolveEvent(p,effOf(it),'愛心結算'),dis)); });
+}
+function openBank(p){
+  const opts=modalShell(p,'🏦','銀行格', p.is_vip?'你已是銀行 VIP！經過起點/銀行會自動 +'+VIP_INTEREST+' 元利息。也可以再買「幸運保險卡」防止被陷害。':'來到銀行！可存錢成為 VIP，或購買「幸運保險卡」抵擋一次被別組陷害。');
+  if(!p.is_vip) opts.append(optRow('special','🏦 存 '+VIP_COST+' 元成為 VIP','−'+VIP_COST+'元 🏦VIP',()=>resolveEvent(p,{money:-VIP_COST,vip:true},'成為銀行 VIP！'), p.money<VIP_COST));
+  opts.append(optRow('special','🛡️ 買幸運保險卡','−'+INSURANCE_COST+'元 🛡️保險卡',()=>resolveEvent(p,{money:-INSURANCE_COST,insurance:1},'獲得幸運保險卡！可擋一次陷害'), p.money<INSURANCE_COST));
+  opts.append(optRow('plain','🚪 離開銀行','',()=>resolveEvent(p,{},'')));
+}
+function openStart(p){
+  const opts=modalShell(p,'🏁','夢想起點','抵達夢想起點！請領取實體 200 元（系統不記錄金錢）。');
+  opts.append(optRow('info','🏁 已領 200 元，繼續冒險','實體+200元',()=>{ sfx.pass(); resolveEvent(p,{},'請發給 '+p.name+' 實體 200 元'); }));
+}
+function openPark(p){
+  const cfg=G.config.tiles.park; const opts=modalShell(p,'🌳','公園格','來到公園～要挑戰一題公園小任務，還是直接休息呢？');
+  opts.append(optRow('good','📝 做公園題目', effText(cfg.doEffect), ()=>parkQuestion(p)));
+  opts.append(optRow('plain','🌳 直接休息', effText(cfg.skipEffect), ()=>resolveEvent(p, effOf(cfg.skipEffect), '在公園休息')));
+}
+function parkQuestion(p){
+  const cfg=G.config.tiles.park; const q=cfg.questions.length?cfg.questions[Math.floor(Math.random()*cfg.questions.length)]:'（尚未設定題目）';
+  const opts=modalShell(p,'🌳📝','公園小任務', '<b>'+escapeHtml(q)+'</b>');
+  opts.append(optRow('good','✅ 完成題目', effText(cfg.doEffect), ()=>resolveEvent(p, effOf(cfg.doEffect), '完成公園任務')));
+}
 
-/* ==================================================
-   結算 GET /api/game/results/{save}
-=================================================== */
+/* ---- 挑戰格：題目 + 倒數（暫停/開始） ---- */
+let chId=null, chRemain=0, chTotal=0, chRunning=false;
+function chDraw(){ const n=$('chNum'), ring=$('chRing'); if(!n) return; n.textContent=chRemain; if(ring) ring.style.setProperty('--deg',(chTotal?chRemain/chTotal*360:0)+'deg'); }
+function stopCh(){ chRunning=false; if(chId){ clearInterval(chId); chId=null; } }
+function openChallenge(p){
+  const cfg=G.config.tiles.challenge; const q=cfg.questions.length?cfg.questions[Math.floor(Math.random()*cfg.questions.length)]:'（尚未設定題目）';
+  chTotal=cfg.timerSec||60; chRemain=chTotal; stopCh();
+  const layer=$('modalLayer');
+  layer.innerHTML=`<div class="modal"><div class="m-emoji">⚔️</div><div class="m-title" style="color:${p.color}">挑戰格 · 腦力激盪</div><div class="m-who">${teamTag(p)}</div><div class="m-text"><b>${escapeHtml(q)}</b></div>
+    <div class="ch-timer"><div class="ring" id="chRing"><span id="chNum">${chRemain}</span></div><div class="ch-btns"><button id="chToggle">▶ 開始</button><button id="chReset">↺ 重設</button></div></div>
+    <div class="m-opts" id="mOpts"></div></div>`;
+  layer.classList.remove('hidden'); chDraw();
+  const opts=$('mOpts'); cfg.items.forEach(it=> opts.append(optRow(optCls(it), it.label, effText(it), ()=>resolveEvent(p, effOf(it), '挑戰結算'))));
+  $('chToggle').onclick=()=>{
+    if(chRunning){ stopCh(); $('chToggle').textContent='▶ 繼續'; }
+    else{ chRunning=true; $('chToggle').textContent='⏸ 暫停'; chId=setInterval(()=>{ chRemain--; if(chRemain<=0){ chRemain=0; chDraw(); stopCh(); sfx.medical(); const t=$('chToggle'); if(t) t.textContent='⏱ 時間到'; } else { chDraw(); if(chRemain<=5) sfx.step(); } },1000); }
+  };
+  $('chReset').onclick=()=>{ stopCh(); chRemain=chTotal; chDraw(); const t=$('chToggle'); if(t) t.textContent='▶ 開始'; };
+}
+
+/* ---- 命運格：慢速抽卡 + 自身/陷害二選一 ---- */
+function openChance(p){
+  const cfg=G.config.tiles.chance; const layer=$('modalLayer');
+  layer.innerHTML=`<div class="modal"><div class="draw-spin">🎴</div><div class="m-title" style="color:${p.color}">抽取命運卡…</div><div class="m-text" id="drawDots">洗牌中</div></div>`;
+  layer.classList.remove('hidden');
+  let k=0; const ti=setInterval(()=>{ sfx.step(); k++; const d=$('drawDots'); if(d) d.textContent='洗牌中'+'.'.repeat(k%4); },240);
+  setTimeout(()=>{
+    clearInterval(ti);
+    const selfC=cfg.cards[Math.floor(Math.random()*cfg.cards.length)];
+    const sab=cfg.sabotage[Math.floor(Math.random()*cfg.sabotage.length)];
+    const others=G.players.filter(x=>x.id!==p.id);
+    const target=others[Math.floor(Math.random()*others.length)];
+    revealChance(p, selfC, sab, target);
+  }, cfg.drawMs||1600);
+}
+function sabText(c){ const a=[]; if(c.money) a.push('搶 💰'+c.money); if(c.happy) a.push('搶 💖'+c.happy); if(c.growth) a.push('搶 🌱'+c.growth); return a.join(' '); }
+function revealChance(p, selfC, sab, target){
+  const opts=modalShell(p,'🎲','命運格 · 二選一', '抽到兩張卡，請選一張：');
+  opts.append(optRow('special','😇 自身：'+escapeHtml(selfC.text), effText(selfC), ()=>resolveEvent(p, effOf(selfC), '命運卡結算')));
+  opts.append(optRow('evil','😈 陷害 '+teamTag(target)+'：'+escapeHtml(sab.text), sabText(sab), ()=>{
+    snapshot();
+    if(target.insurance>0){ target.insurance--; sfx.buy(); renderDash(); bump(target.id); toast('🛡️ '+target.name+' 用保險卡擋下了陷害！'); }
+    else { applySabotage(p, target, sab); sfx.evil(); toast('😈 '+p.name+' 陷害了 '+target.name+'！'); }
+    G.turn.resolved=true; closeModal(); renderButtons();
+  }));
+}
+function applySabotage(actor, target, card){
+  let gm=0,gh=0,gg=0;
+  if(card.money){ target.money-=card.money; gm=card.money; }
+  if(card.happy){ gh=Math.min(card.happy, target.happy); target.happy=clamp(target.happy-card.happy); }
+  if(card.growth){ gg=Math.min(card.growth, target.growth); target.growth=clamp(target.growth-card.growth); }
+  actor.money+=gm; actor.happy=clamp(actor.happy+gh); actor.growth=clamp(actor.growth+gg);
+  renderDash(); bump(actor.id); bump(target.id);
+}
+
+function closeModal(){ stopCh(); $('modalLayer').classList.add('hidden'); $('modalLayer').innerHTML=''; }
+
+/* ---- 結算 ---- */
 $('btnFinish').onclick=()=>{ sfx.click(); if(confirm('確定結束遊戲並進行結算嗎？')) endGame(); };
-function totalScore(p){
-  const fragBonus = p.fragments.every(f=>f.got)?SC_FRAG:0;
-  return p.happy*SC_HAPPY + p.growth*SC_GROWTH + fragBonus + p.money;
-}
+function totalScore(p){ const fb=p.fragments.every(f=>f.got)?SC_FRAG:0; return p.happy*SC_HAPPY + p.growth*SC_GROWTH + fb + p.money; }
 function endGame(){
   closeModal();
-  const ranked=G.players.map(p=>({...p, total:totalScore(p), fragDone:p.fragments.every(f=>f.got)}))
-    .sort((a,b)=>b.total-a.total);
-  const champ=ranked[0];
-  let rows='';
-  ranked.forEach((p,i)=>{
-    const medal=['🥇','🥈','🥉'][i]||`${i+1}`;
-    const fragBonus=p.fragDone?SC_FRAG:0;
-    rows+=`<div class="res-row">
-      <span class="r-rank">${medal}</span>
-      <span class="r-emoji">${p.emoji}</span>
-      <span class="r-name" style="color:${p.color}">${escapeHtml(p.name)}</span>
-      <span class="r-break">💖${p.happy}×100 + 🌱${p.growth}×200 ${fragBonus?'+ 🧩500 ':''}+ 💰${p.money}</span>
-      <span class="r-total">${p.total}</span>
-    </div>`;
-  });
-  $('results').innerHTML=`<div class="res-card">
-    <h2>🏆 冒險結算 🏆</h2>
-    <div class="champ">
-      <div class="c-emoji">${champ.emoji}</div>
-      <div class="c-name" style="color:${champ.color}">總冠軍：${escapeHtml(champ.name)}</div>
-      <div style="font-size:20px;color:var(--ink-soft);margin-top:4px;">總分 ${champ.total} 分</div>
-    </div>
-    ${rows}
-    <button class="res-again" onclick="restart()">🔄 再玩一次</button>
-  </div>`;
-  $('results').classList.remove('hidden');
-  sfx.win();
-  bigConfetti();
+  const ranked=G.players.map(p=>({...p, total:totalScore(p), fragDone:p.fragments.every(f=>f.got)})).sort((a,b)=>b.total-a.total);
+  const champ=ranked[0]; let rows='';
+  ranked.forEach((p,i)=>{ const medal=['🥇','🥈','🥉'][i]||`${i+1}`; const fb=p.fragDone?SC_FRAG:0;
+    rows+=`<div class="res-row"><span class="r-rank">${medal}</span><span class="disc-inline" style="background:${p.color}">${p.id+1}</span><span class="r-name" style="color:${p.color}">${escapeHtml(p.name)}</span><span class="r-break">💖${p.happy}×100 + 🌱${p.growth}×200 ${fb?'+ 🧩500 ':''}+ 💰${p.money}</span><span class="r-total">${p.total}</span></div>`; });
+  $('results').innerHTML=`<div class="res-card"><h2>🏆 冒險結算 🏆</h2>
+    <div class="champ"><div class="c-disc" style="background:${champ.color}">${champ.id+1}</div><div class="c-name" style="color:${champ.color}">總冠軍：${escapeHtml(champ.name)}</div><div style="font-size:20px;color:var(--ink-soft);margin-top:4px;">總分 ${champ.total} 分</div></div>
+    ${rows}<button class="res-again" onclick="restart()">🔄 再玩一次</button></div>`;
+  $('results').classList.remove('hidden'); sfx.win(); bigConfetti();
 }
 
-/* ==================================================
-   Confetti
-=================================================== */
-const cv=$('confetti'), cx=cv.getContext('2d');
-let parts=[], ctimer=null;
-function csize(){ cv.width=innerWidth; cv.height=innerHeight; }
-addEventListener('resize',csize); csize();
-function spawn(n){
-  const cols=['#ff9eb5','#ffb38a','#8fd6a6','#8ec7f0','#c7a9f0','#ffd97a'];
-  for(let i=0;i<n;i++) parts.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.3,
-    vx:(Math.random()-.5)*3,vy:2+Math.random()*4,size:6+Math.random()*8,
-    color:cols[Math.floor(Math.random()*cols.length)],rot:Math.random()*6,vr:(Math.random()-.5)*.3,life:0});
+/* ===== 設定儲存：localStorage + Firestore ===== */
+const LS_KEY='rabbitAdventureSetup_v2';
+const CLOUD_DOC = db ? db.collection('config').doc('teacherSettings') : null;
+let _resetting=false;
+function setCloudStatus(t){ const e=$('cloudStatus'); if(e) e.textContent=t; }
+function saveLocal(){ if(_resetting) return; try{ localStorage.setItem(LS_KEY, JSON.stringify(setup)); }catch(e){} }
+let _cloudTimer=null;
+function saveCloud(){ if(_resetting||!CLOUD_DOC) return; clearTimeout(_cloudTimer); _cloudTimer=setTimeout(()=>{ setCloudStatus('☁️ 同步中…'); CLOUD_DOC.set({data:JSON.stringify(setup),updatedAt:Date.now()}).then(()=>setCloudStatus('☁️ 已同步雲端')).catch(e=>{ console.warn(e); setCloudStatus('⚠️ 雲端同步失敗（仍存本機）'); }); },700); }
+function saveSetup(){ saveLocal(); saveCloud(); }
+let _saveTimer=null;
+function autoSave(){ clearTimeout(_saveTimer); _saveTimer=setTimeout(saveLocal,400); saveCloud(); }
+function normalizeTiles(t){
+  const d=DEFAULT_TILES();
+  try{
+    if(t.shop){ if(t.shop.text) d.shop.text=t.shop.text; if(Array.isArray(t.shop.items)&&t.shop.items.length) d.shop.items=t.shop.items; }
+    if(t.challenge){ if(typeof t.challenge.timerSec==='number') d.challenge.timerSec=t.challenge.timerSec; if(Array.isArray(t.challenge.questions)&&t.challenge.questions.length) d.challenge.questions=t.challenge.questions; if(Array.isArray(t.challenge.items)&&t.challenge.items.length) d.challenge.items=t.challenge.items; }
+    if(t.charity){ if(t.charity.text) d.charity.text=t.charity.text; if(Array.isArray(t.charity.items)&&t.charity.items.length) d.charity.items=t.charity.items; }
+    if(t.chance){ if(typeof t.chance.drawMs==='number') d.chance.drawMs=t.chance.drawMs; if(Array.isArray(t.chance.cards)&&t.chance.cards.length) d.chance.cards=t.chance.cards; if(Array.isArray(t.chance.sabotage)&&t.chance.sabotage.length) d.chance.sabotage=t.chance.sabotage; }
+    if(t.park){ if(Array.isArray(t.park.questions)&&t.park.questions.length) d.park.questions=t.park.questions; if(t.park.doEffect) d.park.doEffect=t.park.doEffect; if(t.park.skipEffect) d.park.skipEffect=t.park.skipEffect; }
+  }catch(e){}
+  return d;
 }
-function runConfetti(){
-  cv.classList.remove('hidden'); if(ctimer) return;
-  ctimer=setInterval(()=>{
-    cx.clearRect(0,0,cv.width,cv.height);
-    parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.rot+=p.vr; p.life++;
-      cx.save(); cx.translate(p.x,p.y); cx.rotate(p.rot); cx.fillStyle=p.color; cx.fillRect(-p.size/2,-p.size/2,p.size,p.size*.6); cx.restore(); });
-    parts=parts.filter(p=>p.y<cv.height+30 && p.life<420);
-    if(!parts.length){ clearInterval(ctimer); ctimer=null; cv.classList.add('hidden'); }
-  },1000/45);
+function applyLoaded(s){
+  if(!s||typeof s!=='object') return;
+  if(typeof s.maxRounds==='number') setup.maxRounds=s.maxRounds;
+  setup.customRound=!!s.customRound;
+  if(Array.isArray(s.teams)&&s.teams.length>=2) setup.teams=s.teams.slice(0,8).map((t,i)=>({name:t.name||('第'+(i+1)+'組'), color:TEAM_COLORS[i]}));
+  if(typeof s.totalTiles==='number') setup.totalTiles=s.totalTiles;
+  if(s.weights) setup.weights={...DEFAULT_WEIGHTS, ...s.weights};
+  if(s.tiles) setup.tiles=normalizeTiles(s.tiles);
 }
+function loadLocal(){ try{ const raw=localStorage.getItem(LS_KEY); if(raw) applyLoaded(JSON.parse(raw)); }catch(e){} }
+function applySetupToUI(){
+  $('totalTiles').value=setup.totalTiles;
+  if(setup.customRound){ $('customRound').value=setup.maxRounds; $('customRoundRow').style.display='flex'; } else $('customRoundRow').style.display='none';
+  renderRoundPills(); renderTeams(); renderWeights(); renderTileEditor();
+}
+function loadFromCloud(){
+  if(!CLOUD_DOC){ setCloudStatus('（未連雲端，僅存本機）'); return; }
+  setCloudStatus('☁️ 讀取雲端設定…');
+  CLOUD_DOC.get().then(doc=>{
+    if(doc.exists && doc.data() && doc.data().data){ try{ applyLoaded(JSON.parse(doc.data().data)); applySetupToUI(); }catch(e){} setCloudStatus('☁️ 已從雲端載入設定'); }
+    else{ setCloudStatus('☁️ 雲端尚無設定，將自動建立'); saveCloud(); }
+  }).catch(e=>{ console.warn(e); setCloudStatus('⚠️ 讀取雲端失敗（改用本機）'); });
+}
+
+loadLocal(); applySetupToUI(); loadFromCloud();
+['input','change','click'].forEach(ev=> $('setup').addEventListener(ev, autoSave));
+$('resetSetup').onclick=()=>{ if(confirm('確定清除已記憶的設定，回復成預設值嗎？（雲端也會清除）')){ _resetting=true; try{ localStorage.removeItem(LS_KEY); }catch(e){} if(CLOUD_DOC) CLOUD_DOC.delete().catch(()=>{}); location.reload(); } };
+
+/* ===== 全螢幕 ===== */
+function toggleFullscreen(){ const el2=document.documentElement; if(!document.fullscreenElement && !document.webkitFullscreenElement){ (el2.requestFullscreen||el2.webkitRequestFullscreen||function(){}).call(el2); } else { (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document); } }
+function updateFsLabel(){ const on=!!(document.fullscreenElement||document.webkitFullscreenElement); document.querySelectorAll('.fs-btn').forEach(b=> b.textContent=on?'⛶ 離開全螢幕':'⛶ 全螢幕'); }
+document.addEventListener('fullscreenchange', updateFsLabel);
+document.addEventListener('webkitfullscreenchange', updateFsLabel);
+document.querySelectorAll('.fs-btn').forEach(b=> b.onclick=toggleFullscreen);
+
+/* ===== 音效開關 / 開始 ===== */
+$('startGame').onclick=()=>{ Sound.ensure(); gameStart(); };
+$('btnMute').onclick=()=>{ const on=!Sound.isEnabled(); Sound.setEnabled(on); if(on){ Sound.ensure(); Sound.click(); } $('btnMute').textContent=on?'🔊 音效：開':'🔇 音效：關'; };
+
+/* ===== Confetti ===== */
+const cv=$('confetti'), cx=cv.getContext('2d'); let parts=[], ctimer=null;
+function csize(){ cv.width=innerWidth; cv.height=innerHeight; } addEventListener('resize',csize); csize();
+addEventListener('resize',()=>{ if(G && !$('game').classList.contains('hidden')) buildBoard(); });
+function spawn(n){ const cols=['#ff9eb5','#ffb38a','#8fd6a6','#8ec7f0','#c7a9f0','#ffd97a']; for(let i=0;i<n;i++) parts.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.3,vx:(Math.random()-.5)*3,vy:2+Math.random()*4,size:6+Math.random()*8,color:cols[Math.floor(Math.random()*cols.length)],rot:Math.random()*6,vr:(Math.random()-.5)*.3,life:0}); }
+function runConfetti(){ cv.classList.remove('hidden'); if(ctimer) return; ctimer=setInterval(()=>{ cx.clearRect(0,0,cv.width,cv.height); parts.forEach(p=>{ p.x+=p.vx;p.y+=p.vy;p.vy+=0.05;p.rot+=p.vr;p.life++; cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.fillStyle=p.color;cx.fillRect(-p.size/2,-p.size/2,p.size,p.size*.6);cx.restore(); }); parts=parts.filter(p=>p.y<cv.height+30&&p.life<420); if(!parts.length){ clearInterval(ctimer); ctimer=null; cv.classList.add('hidden'); } },1000/45); }
 function bigConfetti(){ spawn(180); runConfetti(); }
 
-/* ==================================================
-   工具
-=================================================== */
-const DICE=['⚀','⚁','⚂','⚃','⚄','⚅'];
-$('startGame').onclick=()=>{ Sound.ensure(); gameStart(); };
-$('btnMute').onclick=()=>{
-  const on=!Sound.isEnabled();
-  Sound.setEnabled(on);
-  if(on){ Sound.ensure(); Sound.click(); }
-  $('btnMute').textContent = on ? '🔊 音效：開' : '🔇 音效：關';
-};
+/* ===== 工具 ===== */
+function restart(){ G=null; location.reload(); }
 function clamp(v){ return Math.max(0,Math.min(10,v)); }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-let tt=null;
-function toast(msg,warn){ const t=$('toast'); t.textContent=msg; t.className='toast show'+(warn?' warn':''); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2400); }
+let _tt=null;
+function toast(msg,warn){ const t=$('toast'); t.textContent=msg; t.className='toast show'+(warn?' warn':''); clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2400); }
 
-/* 防止活動現場誤按重新整理／關閉分頁：遊戲進行中會跳出確認 */
-window.addEventListener('beforeunload', e=>{
-  saveSetup();
-  if(G){ e.preventDefault(); e.returnValue=''; return ''; }
-});
-// 刻意重新開始（結算後「再玩一次」）：先清狀態再重載，不觸發攔截
-function restart(){ G=null; location.reload(); }
+window.addEventListener('beforeunload', e=>{ saveSetup(); if(G){ e.preventDefault(); e.returnValue=''; return ''; } });
 </script>
 </body>
 </html>
