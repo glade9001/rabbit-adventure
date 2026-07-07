@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 老師設定：單一共用文件（無帳號登入的課堂工具），開放讀寫
+    match /config/{docId} {
+      allow read, write: if true;
+    }
+
+    // 其餘一律禁止
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
