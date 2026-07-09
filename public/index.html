@@ -54,7 +54,10 @@ input:focus{ outline:none; border-color:var(--sky-d);}
 
 #teamList{ display:flex; flex-direction:column; gap:10px;}
 .team-row{ display:flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--paper2); border-radius:14px; padding:8px 12px;}
-.team-row .name-in{ flex:1; min-width:140px;}
+.team-row .name-in{ flex:1; min-width:120px;}
+.team-row .money-label{ font-size:13px; color:var(--ink-soft); white-space:nowrap;}
+.team-row .money-in{ width:80px; text-align:right;}
+.team-row .money-unit{ font-size:13px; color:var(--ink-soft);}
 .add-btn{ margin-top:10px; border:2px dashed var(--mint-d); background:#f2fbef; color:var(--mint-d); padding:10px; border-radius:14px; font-size:16px; font-weight:800; width:100%;}
 
 .disc{ width:32px;height:32px;border-radius:50%;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);flex:none;}
@@ -355,6 +358,7 @@ const ROUND_OPTIONS = [5,8,10,12];
 const SC_HAPPY=100, SC_GROWTH=200, SC_FRAG=500;
 const MEDICAL_FEE=100, REVIVE_HEALTH=5;
 const VIP_COST=100, VIP_INTEREST=20, INSURANCE_COST=50;
+const DEFAULT_MONEY=200;  // 每組預設起始金額（可在設定頁逐組調整）
 
 function DEFAULT_TILES(){ return {
   shop:{ text:'歡迎光臨夢想商店！（每次隨機出現 3 種商品，和台下同學討論）', items:[
@@ -403,7 +407,7 @@ function DEFAULT_TILES(){ return {
 /* ===== 設定狀態 ===== */
 let setup = {
   maxRounds:8, customRound:false,
-  teams:[0,1,2,3,4].map(i=>({ name:'第'+(i+1)+'組', color:TEAM_COLORS[i] })),
+  teams:[0,1,2,3,4].map(i=>({ name:'第'+(i+1)+'組', color:TEAM_COLORS[i], money:DEFAULT_MONEY })),
   totalTiles:24,
   weights:{...DEFAULT_WEIGHTS},
   tiles: DEFAULT_TILES(),
@@ -423,17 +427,22 @@ function renderTeams(){
   const box=$('teamList'); box.innerHTML='';
   setup.teams.forEach((t,i)=>{
     t.color=TEAM_COLORS[i];
+    if(t.money===undefined) t.money=DEFAULT_MONEY;
     const row=document.createElement('div'); row.className='team-row';
     row.innerHTML=`<span class="disc" style="background:${t.color}">${i+1}</span>
       <input class="name-in" value="${escapeHtml(t.name)}">
+      <span class="money-label">💰 起始</span>
+      <input class="money-in" type="number" min="0" step="10" value="${t.money}">
+      <span class="money-unit">元</span>
       <button class="icon-btn" title="刪除">✕</button>`;
     row.querySelector('.name-in').oninput=e=>t.name=e.target.value;
+    row.querySelector('.money-in').oninput=e=>{ t.money=Math.max(0, parseInt(e.target.value)||0); };
     row.querySelector('.icon-btn').onclick=()=>{ if(setup.teams.length<=2){alert('最少 2 組喔！');return;} setup.teams.splice(i,1); renderTeams(); };
     box.appendChild(row);
   });
   $('addTeam').disabled=setup.teams.length>=8;
 }
-$('addTeam').onclick=()=>{ if(setup.teams.length>=8){alert('最多 8 組喔！');return;} const i=setup.teams.length; setup.teams.push({name:'第'+(i+1)+'組',color:TEAM_COLORS[i]}); renderTeams(); };
+$('addTeam').onclick=()=>{ if(setup.teams.length>=8){alert('最多 8 組喔！');return;} const i=setup.teams.length; setup.teams.push({name:'第'+(i+1)+'組',color:TEAM_COLORS[i],money:DEFAULT_MONEY}); renderTeams(); };
 
 function renderWeights(){
   const box=$('weights'); box.innerHTML='';
@@ -496,7 +505,7 @@ function gameStart(){
     save:{ save_name:'課堂存檔', current_turn:0, current_round:1, max_rounds:setup.maxRounds },
     players: setup.teams.map((t,i)=>({
       id:i, name:(t.name||'').trim()||('第'+(i+1)+'組'), color:TEAM_COLORS[i],
-      position:0, money:200, happy:3, growth:3, health:8,
+      position:0, money:(t.money!==undefined?t.money:DEFAULT_MONEY), happy:3, growth:3, health:8,
       is_vip:false, insurance:0, paused_turns:0, reviveStats:[],
       fragments: FRAG_NAMES.map(n=>({name:n, got:false})),
     })),
@@ -838,7 +847,7 @@ function applyLoaded(s){
   if(!s||typeof s!=='object') return;
   if(typeof s.maxRounds==='number') setup.maxRounds=s.maxRounds;
   setup.customRound=!!s.customRound;
-  if(Array.isArray(s.teams)&&s.teams.length>=2) setup.teams=s.teams.slice(0,8).map((t,i)=>({name:t.name||('第'+(i+1)+'組'), color:TEAM_COLORS[i]}));
+  if(Array.isArray(s.teams)&&s.teams.length>=2) setup.teams=s.teams.slice(0,8).map((t,i)=>({name:t.name||('第'+(i+1)+'組'), color:TEAM_COLORS[i], money:(t.money!==undefined?t.money:DEFAULT_MONEY)}));
   if(typeof s.totalTiles==='number') setup.totalTiles=s.totalTiles;
   if(s.weights) setup.weights={...DEFAULT_WEIGHTS, ...s.weights};
   if(s.tiles) setup.tiles=normalizeTiles(s.tiles);
